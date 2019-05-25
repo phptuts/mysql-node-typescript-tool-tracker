@@ -1,0 +1,6 @@
+.jwt*
+node_modules
+coverage
+.env
+.idea
+dist

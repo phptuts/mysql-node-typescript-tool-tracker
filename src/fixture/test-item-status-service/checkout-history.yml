@@ -1,0 +1,78 @@
+entity: CheckoutHistory
+items:
+    hammer1_part1:
+        item: '@hammer1'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@user1'
+        returnDate: '2019-02-03'
+        userReturningItem: '@user1'
+    hammer1_part2:
+        item: '@hammer1'
+        checkoutDate: '2019-03-01'
+        userCheckoutItem: '@user3'
+        returnDate: '2019-03-03'
+        userReturningItem: '@user2'
+    hammer1_part3:
+        item: '@hammer1'
+        checkoutDate: '2019-03-04'
+        userCheckoutItem: '@user3'
+
+    hammer2_part1:
+        item: '@hammer2'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@user1'
+        returnDate: '2019-02-03'
+        userReturningItem: '@user1'
+    hammer2_part2:
+        item: '@hammer2'
+        checkoutDate: '2019-03-01'
+        userCheckoutItem: '@user3'
+        returnDate: '2019-03-03'
+        userReturningItem: '@user2'
+    hammer2_part3:
+        item: '@hammer2'
+        checkoutDate: '2019-03-04'
+        userCheckoutItem: '@user3'
+
+    hammer3_part1:
+        item: '@hammer3'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@user1'
+        returnDate: '2019-02-03'
+        userReturningItem: '@user1'
+    hammer3_part2:
+        item: '@hammer3'
+        checkoutDate: '2019-03-01'
+        userCheckoutItem: '@user3'
+        returnDate: '2019-03-03'
+        userReturningItem: '@user2'
+    hammer3_part3:
+        item: '@hammer3'
+        checkoutDate: '2019-03-04'
+        userCheckoutItem: '@user2'
+
+    screw_drive1_part1:
+        item: '@screw_driver1'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@user1'
+        returnDate: '2019-02-03'
+        userReturningItem: '@user1'
+    screw_drive1_part2:
+        item: '@screw_driver1'
+        checkoutDate: '2019-03-01'
+        userCheckoutItem: '@user3'
+        returnDate: '2019-03-03'
+        userReturningItem: '@user2'
+
+    screw_drive2_part1:
+        item: '@screw_driver2'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@user2'
+        returnDate: '2019-02-03'
+        userReturningItem: '@user3'
+    screw_drive2_part2:
+        item: '@screw_driver2'
+        checkoutDate: '2019-03-01'
+        userCheckoutItem: '@user1'
+        returnDate: '2019-03-03'
+        userReturningItem: '@user1'

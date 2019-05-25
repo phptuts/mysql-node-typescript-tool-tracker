@@ -1,0 +1,27 @@
+entity: User
+items:
+    user1:
+        email: 'test-tool-checkout-service_1@gmail.com'
+        password: 'fake'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User1'
+        enabled: true
+        blockCheckout: false
+        rfid: '{{random.number}}'
+        roles: ['ROLE_USER', 'ROLE_ADMIN']
+    user2:
+        email: 'test-tool-checkout-service_2@gmail.com'
+        password: 'fake'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User2'
+        enabled: true
+        blockCheckout: false
+        rfid: '{{random.number}}'
+        roles: ['ROLE_USER']
+    user3:
+        email: 'test-tool-checkout-service_3@gmail.com'
+        password: 'fake'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User3'
+        enabled: true
+        blockCheckout: false
+        rfid: '{{random.number}}'
+        roles: ['ROLE_USER']
+

@@ -1,0 +1,56 @@
+entity: Item
+items:
+    hammer1:
+        catalog: '@catalog1'
+        user: '@user1'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    hammer2:
+        catalog: '@catalog1'
+        user: '@user1'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    hammer3:
+        catalog: '@catalog1'
+        user: '@user1'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    screw_driver1:
+        catalog: '@catalog2'
+        user: '@user1'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    screw_driver2:
+        catalog: '@catalog2'
+        user: '@user1'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    screw_driver3:
+        catalog: '@catalog2'
+        user: '@user1'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    nail_gun1:
+        catalog: '@catalog3'
+        user: '@user2'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    nail_gun2:
+        catalog: '@catalog3'
+        user: '@user2'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+
+    nail_gun3:
+        catalog: '@catalog3'
+        user: '@user2'
+        rfid: '{{random.number}}'
+        createdBy: '@user1'
+

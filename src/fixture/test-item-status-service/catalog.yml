@@ -1,0 +1,22 @@
+entity: Catalog
+items:
+    catalog1:
+        name: 'Hammer'
+        description: 'Hammer'
+        createdBy: '@user1'
+        imageUrl: 'https://fakeimg.pl/350x200/ff0000/000/'
+    catalog2:
+        name: 'Screw Driver'
+        description: 'Screw Driver'
+        createdBy: '@user1'
+        imageUrl: 'https://fakeimg.pl/350x200/ff0000/000/'
+    catalog3:
+        name: 'Nail Gun'
+        description: 'Nail Gun'
+        createdBy: '@user2'
+        imageUrl: 'https://fakeimg.pl/350x200/ff0000/000/'
+    catalog4:
+        name: 'Pencil'
+        description: 'Pencil'
+        createdBy: '@user2'
+        imageUrl: 'https://fakeimg.pl/350x200/ff0000/000/'
