@@ -1,9 +1,9 @@
-import { ViewColumn, ViewEntity } from "typeorm";
+import { PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
 
 
 @ViewEntity({
 	name: 'catalog-status',
-	expression: `SELECT cat.id as 'catalogId', ANY_VALUE(cat.name) as 'name', ANY_VALUE(description) as 'description',
+	expression: `SELECT cat.id as 'id', ANY_VALUE(cat.name) as 'name', ANY_VALUE(description) as 'description',
 COUNT(item.id) as 'numberOfItems',
 SUM(CASE WHEN ch.return_date is NULL and ch.checkout_date is not null THEN 1 ELSE 0 END) as 'numberOfItemCheckedOut',
 SUM(CASE WHEN ch.return_date is NULL and ch.checkout_date is not null THEN 0 ELSE 1 END) as 'numberOfItemAvailable'
@@ -21,8 +21,11 @@ GROUP BY cat.id`
 })
 export class CatalogStatus {
 
+	public static readonly TYPE = 'CATALOG_STATUS';
+
 	@ViewColumn()
-	catalogId: string;
+	@PrimaryColumn()
+	id: string;
 
 	@ViewColumn()
 	name: string;

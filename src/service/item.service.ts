@@ -24,13 +24,11 @@ export class ItemService {
 				return ReturnStatus.ITEM_NOT_FOUND;
 			}
 
-			const checkOutHistory = await
-				this.checkoutHistoryRepository.findOne(itemStatus.checkoutHistoryId);
-
-
-			if (!checkOutHistory.isCheckedOut()) {
+			if (!itemStatus.isCheckedOut) {
 				return ReturnStatus.ITEM_ALREADY_RETURNED;
 			}
+
+			const checkOutHistory = await this.checkoutHistoryRepository.findOne(itemStatus.checkoutHistoryId);
 
 			checkOutHistory.userReturningItem = user;
 			checkOutHistory.returnDate = new Date();
@@ -44,7 +42,10 @@ export class ItemService {
 		}
 	}
 
-	public async checkoutItem() {
+	public async checkoutItem(user: User, item: Item) {
+		const itemStatus = await this
+			.itemStatusRepository
+			.findOne({ itemId: item.id });
 
 	}
 	
