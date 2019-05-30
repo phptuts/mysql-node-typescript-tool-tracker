@@ -1,24 +1,30 @@
 import { PaginatedMetaModel, ResponseModel } from "../model/response/response.model";
+import { injectable } from "inversify";
 
-export const createPaginatedResponse =  <T>(
-	items: T[],
-	numberOfResults: number,
-	currentPage: number,
-	pageSize: number,
-	type: string
-): ResponseModel<T[], PaginatedMetaModel> => {
+@injectable()
+export class PaginateService {
 
-	const numberOfPages = Math.ceil(numberOfResults / pageSize);
-	const lastPage = numberOfPages  === currentPage;
+	public createResponse<T>(
+		items: T[],
+		numberOfResults: number,
+		currentPage: number,
+		pageSize: number,
+		type: string
+	): ResponseModel<T[], PaginatedMetaModel> {
 
-	return {
-		data: items,
-		meta: {
-			pageSize,
-			currentPage,
-			lastPage,
-			type,
-			numberOfPages
+		const numberOfPages = Math.ceil(numberOfResults / pageSize);
+		const lastPage = numberOfPages  === currentPage;
+
+		return {
+			data: items,
+			meta: {
+				pageSize,
+				currentPage,
+				lastPage,
+				type,
+				numberOfPages
+			}
 		}
 	}
 }
+

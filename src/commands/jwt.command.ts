@@ -1,7 +1,7 @@
 import { JWTService } from '../service/jwt.service';
 import { User } from "../entity/user";
 import dotenv  from 'dotenv';
-import { createConnection, getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 import { createTestConnection } from "../test/create-test-connection";
 dotenv.config();
 

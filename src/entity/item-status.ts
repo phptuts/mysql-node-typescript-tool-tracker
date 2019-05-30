@@ -1,5 +1,5 @@
 
-import { ViewColumn, ViewEntity } from "typeorm";
+import { PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
 
 @ViewEntity({
 	name: 'item_status',
@@ -26,6 +26,10 @@ import { ViewColumn, ViewEntity } from "typeorm";
 export class ItemStatus {
 
 	@ViewColumn()
+	@PrimaryColumn()
+	itemId: string;
+
+	@ViewColumn()
 	catalogId: string;
 
 	@ViewColumn()
@@ -36,9 +40,6 @@ export class ItemStatus {
 
 	@ViewColumn()
 	isCheckedOut: boolean;
-
-	@ViewColumn()
-	itemId: string;
 
 	@ViewColumn()
 	rfid: string;

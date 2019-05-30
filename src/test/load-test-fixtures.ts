@@ -1,6 +1,6 @@
 import { createConnection, Loader, Resolver, Builder, Parser, fixturesIterator } from 'typeorm-fixtures-cli';
 import * as path from 'path';
-import { Connection, getConnection, getRepository } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 
 export class LoadTestFixtures {
 	constructor() {}
