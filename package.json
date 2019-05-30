@@ -9,7 +9,7 @@
     "migrations-run": "typeorm migration:run",
     "fixtures": "fixtures ./src/fixture  --config=ormconfig.json",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/startup.ts",
-    "prod": "tsc && node ./build/src.js"
+    "prod": "tsc && node ./dist/startup.js"
   },
   "keywords": [],
   "author": "",

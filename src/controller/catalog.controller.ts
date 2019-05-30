@@ -13,7 +13,8 @@ export class CatalogController implements interfaces.Controller {
 	constructor(@inject(TYPES.CatalogStatusService) private readonly catalogStatusService: CatalogStatusService) { }
 
 	@Get("/catalog-search")
-	async search(req: express.Request): Promise<ResponseModel<CatalogStatus[], PaginatedMetaModel>> {
+	async search(req: express.Request):
+		Promise<ResponseModel<CatalogStatus[], PaginatedMetaModel>> {
 
 		const term = req.query.term || '';
 		const page = parseInt(req.query.page) || 1;

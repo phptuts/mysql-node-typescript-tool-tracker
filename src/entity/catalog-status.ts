@@ -1,4 +1,4 @@
-import { PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
+import { AfterLoad, PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
 
 
 @ViewEntity({
@@ -6,7 +6,7 @@ import { PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
 	expression: `SELECT cat.id as 'catalogId', ANY_VALUE(cat.name) as 'name', ANY_VALUE(description) as 'description',
 COUNT(item.id) as 'numberOfItems',
 SUM(CASE WHEN ch.return_date is NULL and ch.checkout_date is not null THEN 1 ELSE 0 END) as 'numberOfItemCheckedOut',
-SUM(CASE WHEN ch.return_date is NULL and ch.checkout_date is not null THEN 0 ELSE 1 END) as 'numberOfItemAvailable'
+SUM(CASE WHEN ch.return_date is NULL and ch.checkout_date is not null THEN 0 ELSE 1 END) as numberOfItemAvailable
  FROM checkout_history ch
  INNER JOIN
  (
@@ -33,7 +33,6 @@ export class CatalogStatus {
 	@ViewColumn()
 	description: string;
 
-
 	@ViewColumn()
 	numberOfItems: number;
 
@@ -42,4 +41,14 @@ export class CatalogStatus {
 
 	@ViewColumn()
 	numberOfItemCheckedOut: number;
+	
+	canCheckout: boolean;
+
+	@AfterLoad()
+	afterLoad() {
+		this.numberOfItemAvailable = parseInt(this.numberOfItemAvailable.toString());
+		this.numberOfItemCheckedOut = parseInt(this.numberOfItemCheckedOut.toString());
+		this.numberOfItems = parseInt(this.numberOfItems.toString());
+		this.canCheckout = this.numberOfItems > 0;
+	}
 }
