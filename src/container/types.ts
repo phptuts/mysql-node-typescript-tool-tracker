@@ -1,7 +1,8 @@
+
 const TYPES = {
-	Warrior: Symbol.for("Warrior"),
-	Weapon: Symbol.for("Weapon"),
-	ThrowableWeapon: Symbol.for("ThrowableWeapon")
+	CatalogStatusService: Symbol.for("CatalogStatusService"),
+	ItemService: Symbol.for("ItemService"),
+	JWTService: Symbol.for("JWTService"),
 };
 
 export { TYPES };

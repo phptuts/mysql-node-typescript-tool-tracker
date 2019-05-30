@@ -1,24 +1,29 @@
-import { Repository } from "typeorm";
-import { ItemStatus } from "../entity/item-status";
+import { getCustomRepository, getRepository, Repository } from "typeorm";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { User } from "../entity/user";
 import { Item } from "../entity/item";
+import { injectable } from "inversify";
+import { ItemStatusRepository } from "../repository/item-status.repository";
 
-
+@injectable()
 export class ItemService {
 
+	private itemStatusRepository: ItemStatusRepository;
 
-	constructor(
-		private readonly itemStatusRepository: Repository<ItemStatus>,
-		private readonly checkoutHistoryRepository: Repository<CheckoutHistory>
-	) {}
+	private checkoutHistoryRepository: Repository<CheckoutHistory>;
 
-	public async returnItem(user: User, item: Item): Promise<ReturnStatus>
-	{
+	constructor() {
+		this.itemStatusRepository = getCustomRepository( ItemStatusRepository );
+		this.checkoutHistoryRepository = getRepository( CheckoutHistory );
+
+	}
+
+	public async returnItem( user: User, item: Item ): Promise<ReturnStatus> {
 		try {
-			const itemStatus = await this
-				.itemStatusRepository
-				.findOne({ itemId: item.id });
+
+
+			const itemStatus = await this.itemStatusRepository
+				.findOne( { itemId: item.id } );
 
 			if (!itemStatus) {
 				return ReturnStatus.ITEM_NOT_FOUND;
@@ -28,27 +33,27 @@ export class ItemService {
 				return ReturnStatus.ITEM_ALREADY_RETURNED;
 			}
 
-			const checkOutHistory = await this.checkoutHistoryRepository.findOne(itemStatus.checkoutHistoryId);
+			const checkOutHistory = await this.checkoutHistoryRepository.findOne( itemStatus.checkoutHistoryId );
 
 			checkOutHistory.userReturningItem = user;
 			checkOutHistory.returnDate = new Date();
 
-			await this.checkoutHistoryRepository.save(checkOutHistory);
+			await this.checkoutHistoryRepository.save( checkOutHistory );
 
 			return ReturnStatus.ITEM_SUCCESSFUL_RETURNED;
 		} catch (e) {
-			console.error(e);
+			console.error( e );
 			return ReturnStatus.SYSTEM_ERROR;
 		}
 	}
 
-	public async checkoutItem(user: User, item: Item) {
+	public async checkoutItem( user: User, item: Item ) {
 		const itemStatus = await this
 			.itemStatusRepository
-			.findOne({ itemId: item.id });
+			.findOne( { itemId: item.id } );
 
 	}
-	
+
 }
 
 export enum ReturnStatus {

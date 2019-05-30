@@ -3,8 +3,9 @@ import path from 'path';
 import { promises as fsPromise }  from 'fs'
 import { User } from "../entity/user";
 import { Repository } from "typeorm";
+import { injectable } from "inversify";
 
-
+@injectable()
 export class JWTService {
 
 	constructor(private userRepository: Repository<User>) { }

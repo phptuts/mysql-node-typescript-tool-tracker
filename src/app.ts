@@ -13,7 +13,8 @@ import dotenv  from 'dotenv';
 import { CatalogStatus } from "./entity/catalog-status";
 import { ItemStatus } from "./entity/item-status";
 import { CatalogStatusService } from "./service/catalog-status.service";
-import { CatalogStatusRepository } from "./repository/catalog-status.repository";
+import { container } from "./container/container";
+import { TYPES } from "./container/types";
 dotenv.config();
 
 
@@ -25,8 +26,7 @@ app.get('/items', async (req, res) => {
 
 	const availableOnly = req.query.availableOnly || false;
 
-	const catalogService =
-		new CatalogStatusService(getCustomRepository(CatalogStatusRepository), 2);
+	const catalogService = container.get<CatalogStatusService>(TYPES.CatalogStatusService);
 
 	const catalogStatus = await catalogService.search(page, availableOnly, term);
 

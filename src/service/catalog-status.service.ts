@@ -3,19 +3,23 @@ import { PaginatedMetaModel, ResponseModel } from "../model/response/response.mo
 import { createPaginatedResponse } from "./paginate.service";
 import { CatalogStatusRepository } from "../repository/catalog-status.repository";
 import { inject, injectable } from "inversify";
+import { TYPES } from "../container/types";
+import { getCustomRepository } from "typeorm";
 
 
 @injectable()
 export class CatalogStatusService {
 
-	constructor(@inject(CatalogStatusRepository.name) private readonly catalogStatusRepository: CatalogStatusRepository, public readonly pageSize = 10) { }
+	constructor( public readonly pageSize = 10 ) {
+	}
 
-	async search(page: number, availableOnly = false, term = ''): Promise<ResponseModel<CatalogStatus[], PaginatedMetaModel>>  {
+	async search( page: number, availableOnly = false, term = '' ): Promise<ResponseModel<CatalogStatus[], PaginatedMetaModel>> {
 
-		const { data, total } = await this.catalogStatusRepository.search(page, this.pageSize, availableOnly, term);
+		const { data, total } = await getCustomRepository( CatalogStatusRepository )
+			.search( page, this.pageSize, availableOnly, term );
 
 		return createPaginatedResponse<CatalogStatus>
-		(data, total, page, this.pageSize, CatalogStatus.TYPE);
+		( data, total, page, this.pageSize, CatalogStatus.TYPE );
 	}
 }
 
