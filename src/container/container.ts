@@ -5,8 +5,9 @@ import { ItemService } from "../service/item.service";
 import { JWTService } from "../service/jwt.service";
 import { interfaces as restinterfaces, TYPE } from "inversify-restify-utils";
 import { CatalogController } from "../controller/catalog.controller";
-import { EntityManager, getManager } from "typeorm";
+import { EntityManager, getCustomRepository, getManager } from "typeorm";
 import { PaginateService } from "../service/paginate.service";
+import { CatalogStatusRepository } from "../repository/catalog-status.repository";
 
 const container = new Container();
 
@@ -16,6 +17,12 @@ container
 	.bind<EntityManager>(TYPES.EntityManager)
 	.toDynamicValue( () => {
 		return getManager();
+	});
+
+container
+	.bind<CatalogStatusRepository>(TYPES.CatalogStatusRepository)
+	.toDynamicValue( () => {
+		return getCustomRepository(CatalogStatusRepository);
 	});
 
 container.bind<PaginateService>( TYPES.PaginatedService ).to(PaginateService);

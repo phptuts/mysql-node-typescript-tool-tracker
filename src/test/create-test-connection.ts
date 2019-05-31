@@ -17,6 +17,7 @@ export const createTestConnection = async () => {
 		username: "root",
 		password: "",
 		database: "tool-tracker-test",
+		bigNumberStrings: false, // Prevent orm from serializing number to string
 		entities: [
 			User,
 			CheckoutHistory,

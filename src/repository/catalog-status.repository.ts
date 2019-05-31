@@ -18,7 +18,7 @@ export class CatalogStatusRepository extends Repository<CatalogStatus>  {
 		}
 
 		if (term.length > 0) {
-			findOptions.where.name = Like(term);
+			findOptions.where.name = Like('%' + term + '%');
 		}
 
 		findOptions.skip = pageSize * (page - 1);

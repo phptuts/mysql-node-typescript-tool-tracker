@@ -1,10 +1,10 @@
 import { CatalogStatusService } from "../service/catalog-status.service";
-import express from 'express';
-import { Controller, Get, interfaces } from 'inversify-restify-utils';
+import { Controller, Get, interfaces,  } from 'inversify-restify-utils';
 import { PaginatedMetaModel, ResponseModel } from "../model/response/response.model";
 import { CatalogStatus } from "../entity/catalog-status";
 import { TYPES } from "../container/types";
 import { inject, injectable } from "inversify";
+import { Request } from 'restify';
 
 @injectable()
 @Controller("/")
@@ -13,7 +13,7 @@ export class CatalogController implements interfaces.Controller {
 	constructor(@inject(TYPES.CatalogStatusService) private readonly catalogStatusService: CatalogStatusService) { }
 
 	@Get("/catalog-search")
-	async search(req: express.Request):
+	async search(req: Request):
 		Promise<ResponseModel<CatalogStatus[], PaginatedMetaModel>> {
 
 		const term = req.query.term || '';

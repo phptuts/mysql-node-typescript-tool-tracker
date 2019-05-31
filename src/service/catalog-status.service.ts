@@ -3,7 +3,6 @@ import { PaginatedMetaModel, ResponseModel } from "../model/response/response.mo
 import { PaginateService } from "./paginate.service";
 import { CatalogStatusRepository } from "../repository/catalog-status.repository";
 import { inject, injectable } from "inversify";
-import { EntityManager } from "typeorm";
 import { TYPES } from "../container/types";
 
 
@@ -11,7 +10,7 @@ import { TYPES } from "../container/types";
 export class CatalogStatusService {
 
 	constructor(@inject(TYPES.PaginatedService) private readonly paginateService: PaginateService,
-	            @inject(TYPES.EntityManager) private readonly entityManager: EntityManager) {}
+	            @inject(TYPES.CatalogStatusRepository) private readonly catalogStatusRepository: CatalogStatusRepository) {}
 
 	/**
 	 * Gets a paginated response model for items in the catalog and their status.
@@ -22,8 +21,7 @@ export class CatalogStatusService {
 		const pageSize = parseInt(process.env.PAGE_SIZE);
 
 		const { data, total } = await this
-			.entityManager
-			.getCustomRepository( CatalogStatusRepository )
+			.catalogStatusRepository
 			.search( page, pageSize, availableOnly, term );
 
 		return this.paginateService

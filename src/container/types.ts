@@ -1,5 +1,6 @@
 
 const TYPES = {
+	CatalogStatusRepository: Symbol.for("CatalogStatusRepository"),
 	CatalogStatusService: Symbol.for("CatalogStatusService"),
 	ItemService: Symbol.for("ItemService"),
 	JWTService: Symbol.for("JWTService"),

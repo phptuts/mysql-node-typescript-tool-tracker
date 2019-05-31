@@ -41,14 +41,11 @@ export class CatalogStatus {
 
 	@ViewColumn()
 	numberOfItemCheckedOut: number;
-	
+
 	canCheckout: boolean;
 
 	@AfterLoad()
 	afterLoad() {
-		this.numberOfItemAvailable = parseInt(this.numberOfItemAvailable.toString());
-		this.numberOfItemCheckedOut = parseInt(this.numberOfItemCheckedOut.toString());
-		this.numberOfItems = parseInt(this.numberOfItems.toString());
 		this.canCheckout = this.numberOfItems > 0;
 	}
 }

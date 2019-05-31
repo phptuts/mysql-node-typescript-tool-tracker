@@ -12,9 +12,6 @@ export class PaginateService {
 		type: string
 	): ResponseModel<T[], PaginatedMetaModel> {
 
-		console.log((items), 'items');
-
-		console.log(JSON.stringify(items), 'items');
 		const numberOfPages = Math.ceil(numberOfResults / pageSize);
 		const lastPage = numberOfPages  === currentPage;
 

@@ -6,6 +6,7 @@
   "password": "",
   "database": "tool-tracker",
   "synchronize": true,
+  "bigNumberString": false,
   "logging": false,
   "entities": [
     "dist/entity/**/*.js",

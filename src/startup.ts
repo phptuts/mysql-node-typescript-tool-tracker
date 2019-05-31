@@ -11,6 +11,8 @@ import { container } from './container/container';
 import { InversifyRestifyServer } from "inversify-restify-utils";
 
 import dotenv  from 'dotenv';
+import { plugins } from "restify";
+import queryParser = plugins.queryParser;
 dotenv.config();
 
 class Startup
@@ -18,14 +20,13 @@ class Startup
 
 	public server ()
 	{
-
 		// create database connection
 		createConnection({
 			type: "mysql",
-			host: "localhost",
-			port: 3306,
-			username: "root",
-			password: "",
+			host: process.env.DB_HOST,
+			port: parseInt(process.env.DB_PORT),
+			username: process.env.DB_USER,
+			password: process.env.DB_PASSWORD,
 			database: "tool-tracker",
 			entities: [
 				User,
@@ -35,6 +36,7 @@ class Startup
 				CatalogStatus,
 				ItemStatus
 			],
+			bigNumberStrings: false, // This is to prevent the orm from serializing number to string
 			synchronize: true,
 			logging: true
 		}) .then(() => {
@@ -45,16 +47,16 @@ class Startup
 	private startExpressServer ()
 	{
 		// start the server
-		let server = new InversifyRestifyServer(container);
-		server.setConfig((app) => {
+		const server = new InversifyRestifyServer(container);
+		const app =server.setConfig((app) => {
 			app.use(bodyParser.urlencoded({
 				extended: true
 			}));
 			app.use(bodyParser.json());
+			app.use(queryParser());
+		}).build();
 
-		});
 
-		let app = server.build();
 		app.listen(3000, () => {
 			console.log('Server started on port 3000 :)');
 		});
