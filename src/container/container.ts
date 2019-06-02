@@ -1,17 +1,23 @@
 import { Container } from "inversify";
 import { TYPES } from "./types";
-import { CatalogStatusService } from "../service/catalog-status.service";
-import { ItemService } from "../service/item.service";
-import { JWTService } from "../service/jwt.service";
 import { interfaces as restinterfaces, TYPE } from "inversify-restify-utils";
 import { CatalogController } from "../controller/catalog.controller";
-import { EntityManager, getCustomRepository, getManager } from "typeorm";
-import { PaginateService } from "../service/paginate.service";
+import { EntityManager, getCustomRepository, getManager, getRepository, Repository } from "typeorm";
 import { CatalogStatusRepository } from "../repository/catalog-status.repository";
+import { ItemStatusRepository } from "../repository/item-status.repository";
+import { User } from "../entity/user";
+import { CheckoutHistory } from "../entity/checkout-history";
+import { JWTService } from "../service/jwt.service";
 
-const container = new Container();
+const container = new Container({
+	autoBindInjectable: true,
+	defaultScope: "Singleton",
+	skipBaseClassChecks: true
+});
 
-container.bind<restinterfaces.Controller>(TYPE.Controller).to(CatalogController).whenTargetNamed('CatalogController');
+container.bind<restinterfaces.Controller>(TYPE.Controller)
+	.to(CatalogController)
+	.whenTargetNamed('CatalogController');
 
 container
 	.bind<EntityManager>(TYPES.EntityManager)
@@ -25,9 +31,39 @@ container
 		return getCustomRepository(CatalogStatusRepository);
 	});
 
-container.bind<PaginateService>( TYPES.PaginatedService ).to(PaginateService);
-container.bind<ItemService>( TYPES.ItemService ).to(ItemService);
-container.bind<CatalogStatusService>( TYPES.CatalogStatusService ).to(CatalogStatusService);
-container.bind<JWTService>( TYPES.JWTService ).to(JWTService);
+container
+	.bind<ItemStatusRepository>(TYPES.ItemStatusRepository)
+	.toDynamicValue( () => {
+		return getCustomRepository(ItemStatusRepository);
+	});
+
+container
+	.bind<Repository<User>>(TYPES.UserRepository)
+	.toDynamicValue( () => {
+		return getRepository(User);
+	});
+
+container
+	.bind<Repository<CheckoutHistory>>(TYPES.CheckoutHistoryRepository)
+	.toDynamicValue(() => {
+		return getRepository(CheckoutHistory);
+	});
+
+
+// container.bind<PaginateService>( TYPES.PaginatedService )
+// 	.to(PaginateService)
+// 	.inSingletonScope();
+//
+// container.bind<ItemService>( TYPES.ItemService )
+// 	.to(ItemService)
+// 	.inSingletonScope();
+//
+// container.bind<CatalogStatusService>( TYPES.CatalogStatusService )
+// 	.to(CatalogStatusService)
+// 	.inSingletonScope();
+
+container.bind<JWTService>( TYPES.JWTService ).toDynamicValue(() => {
+	return new JWTService(getRepository(User));
+});
 
 export { container };

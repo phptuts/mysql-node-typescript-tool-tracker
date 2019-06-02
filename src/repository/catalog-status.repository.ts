@@ -10,7 +10,6 @@ export class CatalogStatusRepository extends Repository<CatalogStatus>  {
 		data: CatalogStatus[],
 		total: number
 	}>  {
-
 		const findOptions: FindManyOptions<CatalogStatus>| any = { where: {} };
 
 		if (availableOnly) {

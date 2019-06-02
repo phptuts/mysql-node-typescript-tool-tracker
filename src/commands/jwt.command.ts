@@ -2,38 +2,23 @@ import { JWTService } from '../service/jwt.service';
 import { User } from "../entity/user";
 import dotenv  from 'dotenv';
 import { getRepository } from "typeorm";
-import { createTestConnection } from "../test/create-test-connection";
+import { container } from "../container/container";
+import { TYPES } from "../container/types";
+import { dbConnection } from "../database/db";
 dotenv.config();
 
 
-
-const user = new User();
-user.rfid = 'rfid-tag';
-user.email = 'gal@gamil.com';
-user.roles = ['ROLE_USER'];
-user.enabled = true;
-user.imageUrl = 'fake-image';
-user.password = 'fake-password';
-
-
-
-
-async function printAndValidate() {
+async function printAndValidate(email: string) {
 	try {
-
-		const connection = await createTestConnection();
+		await dbConnection;
 
 		const userRepository = getRepository(User);
 
+		const jwtService = container.get<JWTService>(TYPES.JWTService);
 
-		const jwtService = new JWTService(userRepository);
-
-
-		console.log(connection.isConnected, 'connected db');
-
-		await userRepository.save(user);
-
-		const jwtToken = await jwtService.generateJWTToken(user);
+		const jwtToken = await jwtService.generateJWTToken(
+			await userRepository.findOne({ where: { email }})
+		);
 
 		const verifiedUser = await jwtService.verifyJWTToken(jwtToken);
 
@@ -45,4 +30,4 @@ async function printAndValidate() {
 	}
 }
 
-printAndValidate().then();
+printAndValidate('test-tool-checkout-service_1@gmail.com').then();

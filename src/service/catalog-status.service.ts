@@ -9,7 +9,7 @@ import { TYPES } from "../container/types";
 @injectable()
 export class CatalogStatusService {
 
-	constructor(@inject(TYPES.PaginatedService) private readonly paginateService: PaginateService,
+	constructor(private readonly paginateService: PaginateService,
 	            @inject(TYPES.CatalogStatusRepository) private readonly catalogStatusRepository: CatalogStatusRepository) {}
 
 	/**

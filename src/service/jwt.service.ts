@@ -53,6 +53,7 @@ export class JWTService {
 			await fsPromise.readFile(path.join(__dirname, '..', '..', '.jwt', 'public.key'), 'utf8');
 
 			const payload  = jwt.verify(token, publicKey, verifyOptions) as { id: string };
+			console.log(payload, 'payload');
 			return await this.userRepository.findOne(payload.id) || false;
 		} catch (e) {
 			console.log(e);

@@ -1,36 +1,28 @@
-import { getCustomRepository, getRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { User } from "../entity/user";
 import { Item } from "../entity/item";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { ItemStatusRepository } from "../repository/item-status.repository";
+import { TYPES } from "../container/types";
 
 @injectable()
 export class ItemService {
 
-	private itemStatusRepository: ItemStatusRepository;
-
-	private checkoutHistoryRepository: Repository<CheckoutHistory>;
-
-	constructor() {
-		this.itemStatusRepository = getCustomRepository( ItemStatusRepository );
-		this.checkoutHistoryRepository = getRepository( CheckoutHistory );
-
-	}
+	constructor(@inject(TYPES.CheckoutHistoryRepository) private checkoutHistoryRepository: Repository<CheckoutHistory>,
+	            @inject(TYPES.ItemStatusRepository)  private itemStatusRepository: ItemStatusRepository) {}
 
 	public async returnItem( user: User, item: Item ): Promise<ReturnStatus> {
-		try {
-
 
 			const itemStatus = await this.itemStatusRepository
 				.findOne( { itemId: item.id } );
 
 			if (!itemStatus) {
-				return ReturnStatus.ITEM_NOT_FOUND;
+				return ReturnStatus.NOT_FOUND;
 			}
 
 			if (!itemStatus.isCheckedOut) {
-				return ReturnStatus.ITEM_ALREADY_RETURNED;
+				return ReturnStatus.ALREADY_RETURNED;
 			}
 
 			const checkOutHistory = await this.checkoutHistoryRepository.findOne( itemStatus.checkoutHistoryId );
@@ -40,11 +32,7 @@ export class ItemService {
 
 			await this.checkoutHistoryRepository.save( checkOutHistory );
 
-			return ReturnStatus.ITEM_SUCCESSFUL_RETURNED;
-		} catch (e) {
-			console.error( e );
-			return ReturnStatus.SYSTEM_ERROR;
-		}
+			return ReturnStatus.SUCCESSFUL_RETURNED;
 	}
 
 	public async checkoutItem( user: User, item: Item ) {
@@ -52,13 +40,35 @@ export class ItemService {
 			.itemStatusRepository
 			.findOne( { itemId: item.id } );
 
+		if (!itemStatus) {
+			return CheckoutStatus.NOT_FOUND;
+		}
+
+		if (itemStatus.isCheckedOut) {
+			return CheckoutStatus.ALREADY_CHECKEDOUT;
+		}
+
+		const checkoutHistoryEntry = new CheckoutHistory();
+		checkoutHistoryEntry.item = item;
+		checkoutHistoryEntry.checkoutDate = new Date();
+		checkoutHistoryEntry.userCheckoutItem = user;
+
+		await this.checkoutHistoryRepository.save(checkoutHistoryEntry);
+
+		return CheckoutStatus.CHECKED_OUT;
 	}
 
 }
 
 export enum ReturnStatus {
-	ITEM_NOT_FOUND,
-	ITEM_ALREADY_RETURNED,
-	ITEM_SUCCESSFUL_RETURNED,
-	SYSTEM_ERROR
+	NOT_FOUND,
+	ALREADY_RETURNED,
+	SUCCESSFUL_RETURNED
+}
+
+export enum CheckoutStatus {
+	NOT_FOUND,
+	ALREADY_CHECKEDOUT,
+	CHECKED_OUT,
+
 }

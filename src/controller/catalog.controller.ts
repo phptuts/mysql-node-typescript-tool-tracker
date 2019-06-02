@@ -2,17 +2,19 @@ import { CatalogStatusService } from "../service/catalog-status.service";
 import { Controller, Get, interfaces,  } from 'inversify-restify-utils';
 import { PaginatedMetaModel, ResponseModel } from "../model/response/response.model";
 import { CatalogStatus } from "../entity/catalog-status";
-import { TYPES } from "../container/types";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { Request } from 'restify';
+import { authUser } from "../middleware/authenticate.middleware";
+import { hasRole } from "../middleware/authorization.middleware";
+
 
 @injectable()
-@Controller("/")
+@Controller("/", authUser)
 export class CatalogController implements interfaces.Controller {
 
-	constructor(@inject(TYPES.CatalogStatusService) private readonly catalogStatusService: CatalogStatusService) { }
+	constructor(private readonly catalogStatusService: CatalogStatusService) { }
 
-	@Get("/catalog-search")
+	@Get("/catalog-search", hasRole("ROLE_USER"))
 	async search(req: Request):
 		Promise<ResponseModel<CatalogStatus[], PaginatedMetaModel>> {
 

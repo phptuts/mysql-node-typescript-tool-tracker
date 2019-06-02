@@ -10,11 +10,11 @@ export class User {
 	@Column({type: 'varchar', nullable: false, unique: true, name: 'email' })
 	email: string;
 
-	@Column({ type: 'varchar', nullable: false, name: 'password' })
-	password: string;
-
 	@Column({ type: 'varchar', nullable: true, name: 'image_url'})
 	imageUrl: string;
+
+	@Column({ type: 'varchar', nullable: true, name: 'phone' })
+	phone: string;
 
 	@Column({ type: 'boolean', nullable: false, default: true, name: 'enabled' })
 	enabled: boolean;
