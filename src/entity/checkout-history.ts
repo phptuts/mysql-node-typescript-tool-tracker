@@ -34,6 +34,13 @@ export class CheckoutHistory {
 	@JoinColumn({ name: 'user_id_returning_item', referencedColumnName: 'id' })
 	public userReturningItem: User;
 
+
+	@Column({ type: 'boolean', nullable: true, name: 'damaged' })
+	public damaged: boolean;
+
+	@Column({ type: 'text', nullable: true, name: 'note' })
+	public note: string;
+
 	public isCheckedOut(): boolean {
 		return this.returnDate == undefined || this.userReturningItem == undefined;
 	}

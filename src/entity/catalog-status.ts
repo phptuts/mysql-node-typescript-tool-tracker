@@ -5,8 +5,9 @@ import { AfterLoad, PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
 	name: 'catalog-status',
 	expression: `SELECT cat.id as 'catalogId', ANY_VALUE(cat.name) as 'name', ANY_VALUE(description) as 'description',
 COUNT(item.id) as 'numberOfItems',
-SUM(CASE WHEN ch.return_date is NULL and ch.checkout_date is not null THEN 1 ELSE 0 END) as 'numberOfItemCheckedOut',
-SUM(CASE WHEN ch.return_date is NULL and ch.checkout_date is not null THEN 0 ELSE 1 END) as numberOfItemAvailable
+SUM(CASE WHEN (ch.return_date is NULL and ch.checkout_date is not null) THEN 1 ELSE 0 END) as 'numberOfItemCheckedOut',
+SUM(item.damaged) as 'numberOfItemsDamaged',
+COUNT(item.id) - SUM(CASE WHEN (ch.return_date is NULL and ch.checkout_date is not null) THEN 1 ELSE 0 END) - SUM(item.damaged)  as 'numberOfItemAvailable'
  FROM checkout_history ch
  INNER JOIN
  (
@@ -37,10 +38,13 @@ export class CatalogStatus {
 	numberOfItems: number;
 
 	@ViewColumn()
-	numberOfItemAvailable: number;
+	numberOfItemCheckedOut: number;
 
 	@ViewColumn()
-	numberOfItemCheckedOut: number;
+	numberOfItemsDamaged: number;
+
+	@ViewColumn()
+	numberOfItemAvailable: number;
 
 	canCheckout: boolean;
 

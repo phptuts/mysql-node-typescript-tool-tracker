@@ -19,15 +19,17 @@ export const createTestConnection = async () => {
 		database: "tool-tracker-test",
 		bigNumberStrings: false, // Prevent orm from serializing number to string
 		entities: [
+
 			User,
 			CheckoutHistory,
 			Item,
 			Catalog,
+
 			ItemStatus,
 			CatalogStatus
 		],
 		synchronize: true,
-		logging: false
+		logging: true
 	});
 };
 

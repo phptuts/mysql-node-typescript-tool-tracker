@@ -5,52 +5,61 @@ items:
         user: '@user1'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 
     hammer2:
         catalog: '@catalog1'
         user: '@user1'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 
     hammer3:
         catalog: '@catalog1'
         user: '@user1'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 
     screw_driver1:
         catalog: '@catalog2'
         user: '@user1'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 
     screw_driver2:
         catalog: '@catalog2'
         user: '@user1'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 
     screw_driver3:
         catalog: '@catalog2'
         user: '@user1'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 
     nail_gun1:
         catalog: '@catalog3'
         user: '@user2'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: true
 
     nail_gun2:
         catalog: '@catalog3'
         user: '@user2'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 
     nail_gun3:
         catalog: '@catalog3'
         user: '@user2'
         rfid: '{{random.number}}'
         createdBy: '@user1'
+        damaged: false
 

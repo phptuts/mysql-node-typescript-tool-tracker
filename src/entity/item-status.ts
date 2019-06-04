@@ -6,7 +6,11 @@ import { PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
 	expression: `SELECT cat.id as 'catalogId', cat.name as 'name', cat.description as 'description',
  item.id as 'itemId',  item.rfid as 'rfid',
  (ch.return_date is NULL and ch.checkout_date is not null) as 'isCheckedOut',
- ch.id as 'checkoutHistoryId', ch.checkout_date as 'itemCheckoutDate', ch.return_date as 'itemReturnDate',
+ ch.id as 'checkoutHistoryId',
+ ch.checkout_date as 'itemCheckoutDate', 
+ ch.return_date as 'itemReturnDate',
+ ch.note,
+ item.damaged,
  uc.id as 'userIdCheckout', uc.email as 'userEmailCheckout',
  ur.id as 'userIdReturn', ur.email as 'userEmailReturn'
  FROM checkout_history ch
@@ -20,8 +24,7 @@ import { PrimaryColumn, ViewColumn, ViewEntity } from "typeorm";
  RIGHT JOIN item on ch.item_id = item.id
  INNER JOIN catalog cat on item.catalog_id = cat.id
  LEFT JOIN user uc on  ch.user_id_checking_out_item = uc.id
- LEFT JOIN user ur on  ch.user_id_returning_item = ur.id
-`
+ LEFT JOIN user ur on  ch.user_id_returning_item = ur.id`
 })
 export class ItemStatus {
 
@@ -64,5 +67,11 @@ export class ItemStatus {
 
 	@ViewColumn()
 	userEmailReturn?: string;
+
+	@ViewColumn()
+	damaged: boolean;
+
+	@ViewColumn()
+	note: string;
 
 }

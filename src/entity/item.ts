@@ -19,4 +19,7 @@ export class Item {
 	@ManyToOne(type => User)
 	@JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
 	createdBy: User;
+
+	@Column({ type: 'boolean', nullable: false, default: false, name: 'damaged' })
+	damaged: boolean;
 }

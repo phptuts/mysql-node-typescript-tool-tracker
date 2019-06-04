@@ -2,7 +2,6 @@ import { Request, Response, Next } from 'restify';
 import { container } from "../container/container";
 import { TYPES } from "../container/types";
 import { JWTService } from "../service/jwt.service";
-import { User } from "../entity/user";
 
 /**
  * Requires that a user must send a valid jwt token attached to the user

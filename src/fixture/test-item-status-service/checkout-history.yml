@@ -76,3 +76,12 @@ items:
         userCheckoutItem: '@user1'
         returnDate: '2019-03-03'
         userReturningItem: '@user1'
+
+    nail_gun1_part1:
+        item: '@nail_gun1'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@user2'
+        returnDate: '2019-02-03'
+        userReturningItem: '@user3'
+        damaged: true
+        note: 'The nail gun froze up'
