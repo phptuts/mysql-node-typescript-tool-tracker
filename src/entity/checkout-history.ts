@@ -16,7 +16,7 @@ export class CheckoutHistory {
 	@Generated("uuid")
 	public id;
 
-	@ManyToOne(type => Item)
+	@ManyToOne(type => Item, { nullable: false })
 	@JoinColumn({ name: 'item_id', referencedColumnName: 'id' })
 	public item: Item;
 

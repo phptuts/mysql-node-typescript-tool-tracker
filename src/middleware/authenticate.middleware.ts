@@ -8,7 +8,7 @@ import { JWTService } from "../service/jwt.service";
  */
 export const authUser = async (req: Request|any, res: Response, next: Next) => {
 
-	const jwtToken = req.headers.authorization.replace('Bearer ', '');
+	const jwtToken = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : false;
 
 	if (!jwtToken) {
 		res.send(401, 'Authentication Required');
@@ -17,7 +17,7 @@ export const authUser = async (req: Request|any, res: Response, next: Next) => {
 
 	const jwtService = container.get<JWTService>(TYPES.JWTService);
 	const user = await jwtService.verifyJWTToken(jwtToken);
-	console.log(user);
+
 	if (!user) {
 		res.send(403, 'Invalid Authentication Token');
 		return;

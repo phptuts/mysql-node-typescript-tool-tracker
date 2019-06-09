@@ -1,17 +1,22 @@
 import 'jest';
-import { createTestConnection } from "../test/create-test-connection";
-import { getConnection, getCustomRepository, getRepository } from "typeorm";
+
+import { getCustomRepository } from "typeorm";
 import { LoadTestFixtures } from "../test/load-test-fixtures";
 import path from "path";
 import { CatalogStatusRepository } from "./catalog-status.repository";
+import { createConnectionTest, dropDatabase } from "../test/test-database-utils";
 
 describe('catalog status repository', () => {
 
+	const databaseName = 'CatalogStatusRepository'
+;
 	let repository: CatalogStatusRepository;
 
+
 	beforeAll(async () => {
-		const connection = await createTestConnection();
-		console.log(connection.isConnected);
+
+		const connection = await createConnectionTest(databaseName);
+		console.log();
 
 		const loadFixtures = new LoadTestFixtures();
 
@@ -20,19 +25,14 @@ describe('catalog status repository', () => {
 			path.join(__dirname,'..','fixture', 'test-item-status-service', 'catalog.yml'),
 			path.join(__dirname,'..','fixture', 'test-item-status-service', 'item.yml'),
 			path.join(__dirname,'..','fixture', 'test-item-status-service', 'checkout-history.yml')
-		]);
-	});
+		], connection);
 
-	beforeEach(async () => {
-
-		repository = getCustomRepository(CatalogStatusRepository);
-
+		repository = getCustomRepository(CatalogStatusRepository, databaseName);
 
 	});
 
 	afterAll(async () => {
-		const connection = await getConnection('default');
-		connection.close();
+		await dropDatabase(databaseName)
 	});
 
 	it ('should be able to search with pagination', async () => {

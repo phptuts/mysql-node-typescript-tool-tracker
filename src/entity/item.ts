@@ -12,11 +12,11 @@ export class Item {
 	@Column({type: "varchar", unique: true, nullable: false, name: 'rfid'})
 	rfid: string;
 
-	@ManyToOne(type => Catalog)
+	@ManyToOne(type => Catalog, { nullable: false})
 	@JoinColumn({ name: 'catalog_id', referencedColumnName: 'id' })
 	catalog: Catalog;
 
-	@ManyToOne(type => User)
+	@ManyToOne(type => User, { nullable: false})
 	@JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
 	createdBy: User;
 

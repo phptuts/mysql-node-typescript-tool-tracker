@@ -17,7 +17,6 @@ export class Catalog {
 	@Column({ type: "varchar", nullable: true, name: 'image_url' })
 	imageUrl: string;
 
-
 	@ManyToOne(type => User)
 	@JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
 	createdBy: User;
