@@ -6,16 +6,12 @@ import { User } from "../entity/user";
  */
 export const hasRole = (role: string) =>  {
 	return  (req: Request|any|{user: User}, res: Response, next: Next) => {
-		if (!req.user) {
-			res.send(403, 'Permission Denied.');
+		if (req.user instanceof User && req.user.roles.includes(role)) {
+			next();
 			return;
 		}
 
-		if (!req.user.roles.includes(role)) {
-			res.send(403, 'Permission Denied.');
-			return;
-		}
-
-		next();
+		res.send(403, 'Permission Denied.');
+		return;
 	}
 };

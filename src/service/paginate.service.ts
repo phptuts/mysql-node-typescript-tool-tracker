@@ -1,5 +1,6 @@
 import { PaginatedMetaModel, ResponseModel } from "../model/response/response.model";
 import { injectable } from "inversify";
+import "reflect-metadata";
 
 @injectable()
 export class PaginateService {

@@ -1,55 +1,57 @@
 import 'jest';
-import { container } from "../container/container";
-import { JWTService } from "../service/jwt.service";
+import { Next, Request, Response } from "restify";
 import { User } from "../entity/user";
-import { Request, Response, Next } from 'restify';
-import { authUser } from "./authenticate.middleware";
+import { hasRole } from "./authorization.middleware";
 
 describe('Authorization Middleware', () => {
 
-	let containerSpy: jest.SpyInstance;
-	let jwtServiceSpy: jest.SpyInstance;
 	let responseSpy: jest.SpyInstance|any;
+	let nextSpy: jest.SpyInstance|any;
 
-	let jwtService: JWTService|any;
+	let req: Request|any;
 
-	const req: Request|any = {
-		headers: {
-			authorization: undefined
-		}
-	};
+	let res: Response|any ;
 
-	const res: Response|any = {
-		send( code?: number, body?: any, headers?: { [ p: string ]: string } ): any {
-		}
-	};
-
-	const next: Next|any = () => {};
 
 	beforeEach(() => {
-		containerSpy = jest.spyOn(container, 'get');
-		jwtService = {
-			verifyJWTToken( token: string ): Promise<false | User> {
-				return Promise.resolve(undefined);
+
+		req = {
+			headers: {
+				authorization: undefined
+			},
+			user: undefined
+		};
+
+		res = {
+			send( code?: number, body?: any, headers?: { [ p: string ]: string } ): any {
 			}
 		};
-		jwtServiceSpy = jest.spyOn(jwtService, 'verifyJWTToken');
+
+
 		responseSpy = jest.spyOn(res, 'send');
+		nextSpy = jasmine.createSpy('Next', () => {});
 	});
 
-	it('should 401 no authorization string in header', async () => {
-
-
-		await authUser(req, res, next);
-		expect(responseSpy).toHaveBeenCalledWith(401, 'Authentication Required');
+	it('should return 403 if user is not present in request object', async () => {
+		await hasRole('ROLE_USER')(req, res, nextSpy);
+		expect(responseSpy).toHaveBeenCalledWith(403, 'Permission Denied.');
+		expect(nextSpy).not.toHaveBeenCalled();
 	});
 
-	// it ('it should 403 if the no user id is found with jwt token', async () => {
-	//
-	// });
-	//
-	// it ('it should attach the user to the request and call next if successful', async () => {
-	//
-	// });
+	it ('should return 403 if user does not have the right role', async () => {
+		req.user = new User();
+		req.user.roles = ['ROLE_USER'];
+		await hasRole('ROLE_ADMIN')(req, res, nextSpy);
+		expect(responseSpy).toHaveBeenCalledWith(403, 'Permission Denied.');
+		expect(nextSpy).not.toHaveBeenCalled();
+	});
+
+	it ('should call next if user has right role', async () => {
+		req.user = new User();
+		req.user.roles = ['ROLE_ADMIN'];
+		await hasRole('ROLE_ADMIN')(req, res, nextSpy);
+		expect(responseSpy).not.toHaveBeenCalled();
+		expect(nextSpy).toHaveBeenCalled();
+	});
 
 });

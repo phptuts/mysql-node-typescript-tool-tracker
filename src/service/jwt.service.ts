@@ -11,8 +11,7 @@ export class JWTService {
 	constructor(private userRepository: Repository<User>) { }
 
 	public async generateJWTToken(user: User): Promise<string> {
-		const privateKey  =
-			await fsPromise
+		const privateKey  = await fsPromise
 				.readFile(
 					path.join(__dirname, '..', '..', '.jwt', 'private.key'),
 					'utf8'
@@ -20,8 +19,6 @@ export class JWTService {
 
 		const payload = {
 			id: user.id,
-			email: user.email,
-			rfid: user.rfid
 		};
 
 		const signOptions = {
@@ -48,12 +45,10 @@ export class JWTService {
 		};
 
 		try {
-
-			const publicKey  =
-			await fsPromise.readFile(path.join(__dirname, '..', '..', '.jwt', 'public.key'), 'utf8');
+			const publicKeyPath = path.join(__dirname, '..', '..', '.jwt', 'public.key');
+			const publicKey  = await fsPromise.readFile( publicKeyPath,'utf8');
 
 			const payload  = jwt.verify(token, publicKey, verifyOptions) as { id: string };
-			console.log(payload, 'payload');
 			return await this.userRepository.findOne(payload.id) || false;
 		} catch (e) {
 			console.log(e);

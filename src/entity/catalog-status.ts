@@ -50,6 +50,6 @@ export class CatalogStatus {
 
 	@AfterLoad()
 	afterLoad() {
-		this.canCheckout = this.numberOfItems > 0;
+		this.canCheckout = this.numberOfItemAvailable > 0;
 	}
 }

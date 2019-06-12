@@ -7,5 +7,8 @@ module.exports = {
   ],
   coverageReporters: [
     "json", "lcov"
-  ]
+  ],
+  setupFilesAfterEnv: [
+      '<rootDir>/dist/test/pre-test.js'
+      ]
 };

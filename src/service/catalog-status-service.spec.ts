@@ -3,7 +3,6 @@ import { CatalogStatus } from "../entity/catalog-status";
 import { CatalogStatusRepository } from "../repository/catalog-status.repository";
 import { CatalogStatusService } from "./catalog-status.service";
 import { PaginateService } from "./paginate.service";
-import { awaitExpression } from "@babel/types";
 
 describe('Catalog Status Service', () => {
 
@@ -11,7 +10,7 @@ describe('Catalog Status Service', () => {
 		search( page: number, pageSize: number, availableOnly: boolean = false, term: string = '' ): Promise<{ data: CatalogStatus[]; total: number }> {
 			return Promise.resolve({ data: [], total: 0 });
 		}
-	}
+	};
 
 	let service: CatalogStatusService;
 
@@ -35,10 +34,12 @@ describe('Catalog Status Service', () => {
 		cat1.name = 'lab';
 		cat1.canCheckout = true;
 
-		repositorySpy.mockImplementation(() => [{
-			data: [cat1],
-			total: 1
-		}]);
+		repositorySpy.mockImplementation(() => {
+			return {
+				data: [cat1],
+				total: 1
+			}
+		});
 
 		const service = new CatalogStatusService(new PaginateService(), repository);
 		const response = await service.search(1, true, 'Hammer');

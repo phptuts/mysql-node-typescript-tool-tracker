@@ -10,7 +10,7 @@ export const authUser = async (req: Request|any, res: Response, next: Next) => {
 
 	const jwtToken = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : false;
 
-	if (!jwtToken) {
+	if (!jwtToken || jwtToken.length == '') {
 		res.send(401, 'Authentication Required');
 		return;
 	}
