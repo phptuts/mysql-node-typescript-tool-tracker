@@ -1,5 +1,5 @@
 import { Request, Response, Next } from 'restify';
-import { container } from "../container/container";
+import { getContainer } from "../container/container";
 import { TYPES } from "../container/types";
 import { JWTService } from "../service/jwt.service";
 
@@ -15,7 +15,7 @@ export const authUser = async (req: Request|any, res: Response, next: Next) => {
 		return;
 	}
 
-	const jwtService = container.get<JWTService>(TYPES.JWTService);
+	const jwtService = getContainer().get<JWTService>(TYPES.JWTService);
 	const user = await jwtService.verifyJWTToken(jwtToken);
 
 	if (!user) {

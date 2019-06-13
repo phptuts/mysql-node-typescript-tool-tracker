@@ -11,6 +11,7 @@ import mysql from 'mysql';
 export const createConnectionTest = async ( dbName: string ) => {
 
 	try {
+		await dropDatabase(dbName);
 		await createDatabase(dbName);
 	} catch (e) {
 		console.log( e, 'error' );
@@ -76,8 +77,8 @@ const runNativeQuery = async (queryString: string) => {
 			}
 
 			nativeConnection.destroy();
-			res();
-
+			res(undefined);
+			return;
 		} )
 	} );
-}
+};

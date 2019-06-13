@@ -24,6 +24,8 @@ export class CatalogStatusRepository extends Repository<CatalogStatus>  {
 
 		findOptions.take = pageSize;
 
+		findOptions.order = { name: 'ASC' };
+
 		const [result, total] = await this.findAndCount(findOptions);
 
 		return {

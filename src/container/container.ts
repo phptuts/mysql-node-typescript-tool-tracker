@@ -9,45 +9,49 @@ import { User } from "../entity/user";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { JWTService } from "../service/jwt.service";
 
-const container = new Container({
-	autoBindInjectable: true,
-	defaultScope: "Singleton",
-	skipBaseClassChecks: true
-});
+let container: Container;
 
-container.bind<restinterfaces.Controller>(TYPE.Controller)
-	.to(CatalogController)
-	.whenTargetNamed('CatalogController');
+export const createContainer = (databaseConnectionName: string = "default") => {
 
-container
-	.bind<EntityManager>(TYPES.EntityManager)
-	.toDynamicValue( () => {
-		return getManager();
+	container = new Container({
+		autoBindInjectable: true,
+		defaultScope: "Singleton",
+		skipBaseClassChecks: true
 	});
 
-container
-	.bind<CatalogStatusRepository>(TYPES.CatalogStatusRepository)
-	.toDynamicValue( () => {
-		return getCustomRepository(CatalogStatusRepository);
-	});
+	container.bind<restinterfaces.Controller>(TYPE.Controller)
+		.to(CatalogController)
+		.whenTargetNamed('CatalogController');
 
-container
-	.bind<ItemStatusRepository>(TYPES.ItemStatusRepository)
-	.toDynamicValue( () => {
-		return getCustomRepository(ItemStatusRepository);
-	});
+	container
+		.bind<EntityManager>(TYPES.EntityManager)
+		.toDynamicValue( () => {
+			return getManager(databaseConnectionName);
+		});
 
-container
-	.bind<Repository<User>>(TYPES.UserRepository)
-	.toDynamicValue( () => {
-		return getRepository(User);
-	});
+	container
+		.bind<CatalogStatusRepository>(TYPES.CatalogStatusRepository)
+		.toDynamicValue( () => {
+			return getCustomRepository(CatalogStatusRepository, databaseConnectionName);
+		});
 
-container
-	.bind<Repository<CheckoutHistory>>(TYPES.CheckoutHistoryRepository)
-	.toDynamicValue(() => {
-		return getRepository(CheckoutHistory);
-	});
+	container
+		.bind<ItemStatusRepository>(TYPES.ItemStatusRepository)
+		.toDynamicValue( () => {
+			return getCustomRepository(ItemStatusRepository, databaseConnectionName);
+		});
+
+	container
+		.bind<Repository<User>>(TYPES.UserRepository)
+		.toDynamicValue( () => {
+			return getRepository(User, databaseConnectionName);
+		});
+
+	container
+		.bind<Repository<CheckoutHistory>>(TYPES.CheckoutHistoryRepository)
+		.toDynamicValue(() => {
+			return getRepository(CheckoutHistory, databaseConnectionName);
+		});
 
 
 // container.bind<PaginateService>( TYPES.PaginatedService )
@@ -62,8 +66,19 @@ container
 // 	.to(CatalogStatusService)
 // 	.inSingletonScope();
 
-container.bind<JWTService>( TYPES.JWTService ).toDynamicValue(() => {
-	return new JWTService(getRepository(User));
-});
+	container.bind<JWTService>( TYPES.JWTService ).toDynamicValue(() => {
+		return new JWTService(getRepository(User, databaseConnectionName));
+	});
 
-export { container };
+
+
+	return container;
+};
+
+export const getContainer = () => {
+	if (!container) {
+		return createContainer();
+	}
+
+	return container;
+};

@@ -2,7 +2,7 @@ import { JWTService } from '../service/jwt.service';
 import { User } from "../entity/user";
 import dotenv  from 'dotenv';
 import { getRepository } from "typeorm";
-import { container } from "../container/container";
+import { createContainer } from "../container/container";
 import { TYPES } from "../container/types";
 import { dbConnection } from "../database/db";
 dotenv.config();
@@ -14,7 +14,7 @@ async function printAndValidate(email: string) {
 
 		const userRepository = getRepository(User);
 
-		const jwtService = container.get<JWTService>(TYPES.JWTService);
+		const jwtService = createContainer().get<JWTService>(TYPES.JWTService);
 
 		const jwtToken = await jwtService.generateJWTToken(
 			await userRepository.findOne({ where: { email }})

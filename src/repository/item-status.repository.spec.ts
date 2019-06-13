@@ -3,7 +3,7 @@ import { LoadTestFixtures } from "../test/load-test-fixtures";
 import path from 'path';
 import { ItemStatusRepository } from "./item-status.repository";
 import { User } from "../entity/user";
-import { getCustomRepository, getRepository } from "typeorm";
+import { Connection, getCustomRepository, getRepository } from "typeorm";
 import { createConnectionTest, dropDatabase } from "../test/test-database-utils";
 
 describe('ItemStatusRepository', () => {
@@ -19,10 +19,12 @@ describe('ItemStatusRepository', () => {
 
 	let user3: User;
 
+	let connection: Connection;
+
 	beforeAll(async () => {
 
 		console.log('ItemStatusRepository');
-		const connection = await createConnectionTest(databaseName);
+		connection = await createConnectionTest(databaseName);
 		const userRepository =  getRepository(User, databaseName);
 
 		repository = getCustomRepository(ItemStatusRepository, databaseName);
@@ -49,7 +51,8 @@ describe('ItemStatusRepository', () => {
 	});
 
 	afterAll(async () => {
-		await dropDatabase(databaseName)
+		await connection.close();
+		await dropDatabase( databaseName );
 	});
 
 	it ('should return the items the user has checked out', async () => {

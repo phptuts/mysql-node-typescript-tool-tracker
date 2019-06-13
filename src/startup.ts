@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import * as bodyParser from 'body-parser';
-import { container } from './container/container';
+import { createContainer } from './container/container';
 import { InversifyRestifyServer } from "inversify-restify-utils";
 
 import { plugins } from "restify";
@@ -20,8 +20,8 @@ class Startup
 	private startExpressServer ()
 	{
 		// start the server
-		const server = new InversifyRestifyServer(container);
-		const app =server.setConfig((app) => {
+		const server = new InversifyRestifyServer(createContainer());
+		const app = server.setConfig(app => {
 			app.use(bodyParser.urlencoded({
 				extended: true
 			}));
@@ -33,6 +33,7 @@ class Startup
 		app.listen(3000, () => {
 			console.log('Server started on port 3000 :)');
 		});
+
 	}
 }
 

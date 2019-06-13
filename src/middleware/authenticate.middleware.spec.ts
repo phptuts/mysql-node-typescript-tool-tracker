@@ -1,9 +1,10 @@
 import 'jest';
-import { container } from "../container/container";
+import * as container from "../container/container";
 import { JWTService } from "../service/jwt.service";
 import { User } from "../entity/user";
 import { Request, Response, Next } from 'restify';
 import { authUser } from "./authenticate.middleware";
+import { TYPES } from "../container/types";
 
 describe('Authentication Middleware', () => {
 
@@ -34,12 +35,23 @@ describe('Authentication Middleware', () => {
 			}
 		};
 
-		containerSpy = jest.spyOn(container, 'get');
 		jwtService = {
 			verifyJWTToken( token: string ): Promise<false | User> {
 				return Promise.resolve(undefined);
 			}
 		};
+
+		containerSpy = jest.spyOn(container, 'getContainer');
+		containerSpy.mockImplementation(() => {
+			return {
+				get(type: Symbol) {
+					if (TYPES.JWTService) {
+						return jwtService;
+					}
+				}
+			}
+		});
+
 		jwtServiceSpy = jest.spyOn(jwtService, 'verifyJWTToken');
 		responseSpy = jest.spyOn(res, 'send');
 		nextSpy = jasmine.createSpy('Next', () => {});
@@ -56,7 +68,6 @@ describe('Authentication Middleware', () => {
 		req.headers.authorization = 'Bearer jwt_token';
 
 		jwtServiceSpy.mockImplementation(() => Promise.resolve(undefined));
-		containerSpy.mockImplementation(() => jwtService);
 
 		await authUser(req, res, next);
 
@@ -71,7 +82,6 @@ describe('Authentication Middleware', () => {
 		const user = new User();
 
 		jwtServiceSpy.mockImplementation(() => Promise.resolve(user));
-		containerSpy.mockImplementation(() => jwtService);
 
 		await authUser(req, res, nextSpy);
 		expect(nextSpy).toHaveBeenCalledTimes(1);

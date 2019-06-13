@@ -1,6 +1,6 @@
 import 'jest';
 
-import { getCustomRepository } from "typeorm";
+import { Connection, getCustomRepository } from "typeorm";
 import { LoadTestFixtures } from "../test/load-test-fixtures";
 import path from "path";
 import { CatalogStatusRepository } from "./catalog-status.repository";
@@ -8,14 +8,14 @@ import { createConnectionTest, dropDatabase } from "../test/test-database-utils"
 
 describe('catalog status repository', () => {
 
-	const databaseName = 'CatalogStatusRepository'
-;
-	let repository: CatalogStatusRepository;
+	const databaseName = 'CatalogStatusRepository';
 
+	let repository: CatalogStatusRepository;
+	let connection: Connection;
 
 	beforeAll(async () => {
 
-		const connection = await createConnectionTest(databaseName);
+		connection = await createConnectionTest(databaseName);
 		console.log();
 
 		const loadFixtures = new LoadTestFixtures();
@@ -31,9 +31,10 @@ describe('catalog status repository', () => {
 
 	});
 
-	afterAll(async () => {
-		await dropDatabase(databaseName)
-	});
+	afterAll( async () => {
+		await connection.close();
+		await dropDatabase( databaseName );
+	} );
 
 	it ('should be able to search with pagination', async () => {
 
