@@ -20,3 +20,4 @@ before_script:
     - mysql --version
 script:
     - npm run travis-ci-test -- --coverage
+    - bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
