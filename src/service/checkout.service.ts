@@ -1,13 +1,13 @@
 import { injectable } from "inversify";
-import { Repository } from "typeorm";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { User } from "../entity/user";
 import { Item } from "../entity/item";
+import { EntityService } from "./entity/entity.service";
 
 @injectable()
 export class CheckoutService {
 
-	constructor(private checkoutHistoryRepository: Repository<CheckoutHistory>) {}
+	constructor(private checkoutHistoryService: EntityService<CheckoutHistory>) {}
 
 	/**
 	 * Creates an entry for checking an item out
@@ -19,7 +19,7 @@ export class CheckoutService {
 		checkoutHistoryEntry.checkoutDate = new Date();
 		checkoutHistoryEntry.userCheckoutItem = user;
 
-		return await this.checkoutHistoryRepository.save(checkoutHistoryEntry);
+		return (await this.checkoutHistoryService.save(checkoutHistoryEntry)) as CheckoutHistory;
 	}
 
 }

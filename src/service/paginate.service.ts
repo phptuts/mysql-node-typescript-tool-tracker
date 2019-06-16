@@ -25,7 +25,7 @@ export class PaginateService {
 				type,
 				numberOfPages
 			}
-		}
+		};
 	}
 }
 

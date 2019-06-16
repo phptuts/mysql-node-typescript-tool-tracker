@@ -2,13 +2,13 @@ import jwt from 'jsonwebtoken';
 import path from 'path';
 import { promises as fsPromise }  from 'fs'
 import { User } from "../entity/user";
-import { Repository } from "typeorm";
 import { injectable } from "inversify";
+import { UserService } from "./entity/user.service";
 
 @injectable()
 export class JWTService {
 
-	constructor(private userRepository: Repository<User>) { }
+	constructor(private userService: UserService) { }
 
 	public async generateJWTToken(user: User): Promise<string> {
 		const privateKey  = await fsPromise
@@ -49,7 +49,7 @@ export class JWTService {
 			const publicKey  = await fsPromise.readFile( publicKeyPath,'utf8');
 
 			const payload  = jwt.verify(token, publicKey, verifyOptions) as { id: string };
-			return await this.userRepository.findOne(payload.id) || false;
+			return await this.userService.findById(payload.id) || false;
 		} catch (e) {
 			console.log(e);
 			return false

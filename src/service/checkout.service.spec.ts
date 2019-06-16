@@ -1,40 +1,40 @@
 import 'jest';
 import { CheckoutService } from "./checkout.service";
-import { Repository } from "typeorm";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { User } from "../entity/user";
 import { Item } from "../entity/item";
+import { EntityService } from "./entity/entity.service";
 
 
 describe('Checkout Service', () => {
 
 	let service: CheckoutService;
 
-	let checkoutRepository: Repository<CheckoutHistory>|any;
+	let checkoutHistoryService: EntityService<CheckoutHistory>|any;
 
-	let checkoutRepositorySpy: jest.SpyInstance;
+	let checkoutHistoryServiceSaveSpy: jest.SpyInstance;
 
 	beforeEach(async () => {
-		checkoutRepository = {
+		checkoutHistoryService = {
 			save(checkoutHistory: CheckoutHistory): Promise<CheckoutHistory> {
 				return Promise.resolve(undefined);
 			}
 		};
 
-		checkoutRepositorySpy = jest.spyOn(checkoutRepository, 'save');
+		checkoutHistoryServiceSaveSpy = jest.spyOn(checkoutHistoryService, 'save');
 
-		service = new CheckoutService(checkoutRepository);
+		service = new CheckoutService(checkoutHistoryService);
 	});
 
 	it ('should create a new checkout entry in the database and save', async () =>{
-		checkoutRepositorySpy.mockImplementation(checkoutHistory =>
+		checkoutHistoryServiceSaveSpy.mockImplementation(checkoutHistory =>
 			Promise.resolve(checkoutHistory));
 
 		const user = new User();
 		const item = new Item();
 		const checkoutHistory = await service.checkoutItem(user, item);
 
-		expect(checkoutRepositorySpy).toHaveBeenCalledWith(expect.any(CheckoutHistory));
+		expect(checkoutHistoryServiceSaveSpy).toHaveBeenCalledWith(expect.any(CheckoutHistory));
 		expect(checkoutHistory.item).toBe(item);
 		expect(checkoutHistory.userCheckoutItem).toBe(user);
 	});

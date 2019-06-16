@@ -1,8 +1,8 @@
 import 'jest';
-import { CatalogStatus } from "../entity/catalog-status";
-import { CatalogStatusRepository } from "../repository/catalog-status.repository";
+import { CatalogStatus } from "../../entity/catalog-status";
+import { CatalogStatusRepository } from "../../repository/catalog-status.repository";
 import { CatalogStatusService } from "./catalog-status.service";
-import { PaginateService } from "./paginate.service";
+import { PaginateService } from "../paginate.service";
 
 describe('Catalog Status Service', () => {
 

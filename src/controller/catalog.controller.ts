@@ -1,4 +1,4 @@
-import { CatalogStatusService } from "../service/catalog-status.service";
+import { CatalogStatusService } from "../service/entity/catalog-status.service";
 import { Controller, Get, interfaces,  } from 'inversify-restify-utils';
 import { PaginatedMetaModel, ResponseModel } from "../model/response/response.model";
 import { CatalogStatus } from "../entity/catalog-status";

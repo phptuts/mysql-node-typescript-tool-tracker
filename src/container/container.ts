@@ -2,32 +2,25 @@ import { Container } from "inversify";
 import { TYPES } from "./types";
 import { interfaces as restinterfaces, TYPE } from "inversify-restify-utils";
 import { CatalogController } from "../controller/catalog.controller";
-import { EntityManager, getCustomRepository, getManager, getRepository, Repository } from "typeorm";
+import { getCustomRepository, getManager, getRepository, Repository } from "typeorm";
 import { CatalogStatusRepository } from "../repository/catalog-status.repository";
-import { ItemStatusRepository } from "../repository/item-status.repository";
 import { User } from "../entity/user";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { JWTService } from "../service/jwt.service";
+import { LoginController } from "../controller/login.controller";
+import { UserService } from "../service/entity/user.service";
+import { ItemStatusService } from "../service/entity/item-status.service";
+import { ItemStatus } from "../entity/item-status";
 
 let container: Container;
 
-export const createContainer = (databaseConnectionName: string = "default") => {
+export const createContainer = (databaseConnectionName = "default") => {
 
 	container = new Container({
 		autoBindInjectable: true,
 		defaultScope: "Singleton",
 		skipBaseClassChecks: true
 	});
-
-	container.bind<restinterfaces.Controller>(TYPE.Controller)
-		.to(CatalogController)
-		.whenTargetNamed('CatalogController');
-
-	container
-		.bind<EntityManager>(TYPES.EntityManager)
-		.toDynamicValue( () => {
-			return getManager(databaseConnectionName);
-		});
 
 	container
 		.bind<CatalogStatusRepository>(TYPES.CatalogStatusRepository)
@@ -36,14 +29,15 @@ export const createContainer = (databaseConnectionName: string = "default") => {
 		});
 
 	container
-		.bind<ItemStatusRepository>(TYPES.ItemStatusRepository)
+		.bind<ItemStatusService>(TYPES.ItemStatusRepository)
 		.toDynamicValue( () => {
-			return getCustomRepository(ItemStatusRepository, databaseConnectionName);
+			return new ItemStatusService(getRepository(ItemStatus));
 		});
 
 	container
 		.bind<Repository<User>>(TYPES.UserRepository)
 		.toDynamicValue( () => {
+			console.log('in here');
 			return getRepository(User, databaseConnectionName);
 		});
 
@@ -54,21 +48,18 @@ export const createContainer = (databaseConnectionName: string = "default") => {
 		});
 
 
-// container.bind<PaginateService>( TYPES.PaginatedService )
-// 	.to(PaginateService)
-// 	.inSingletonScope();
-//
-// container.bind<ItemService>( TYPES.ItemService )
-// 	.to(ItemService)
-// 	.inSingletonScope();
-//
-// container.bind<CatalogStatusService>( TYPES.CatalogStatusService )
-// 	.to(CatalogStatusService)
-// 	.inSingletonScope();
-
 	container.bind<JWTService>( TYPES.JWTService ).toDynamicValue(() => {
-		return new JWTService(getRepository(User, databaseConnectionName));
+		return new JWTService(new UserService(getRepository(User, databaseConnectionName)));
 	});
+
+	container
+		.bind<restinterfaces.Controller>(TYPE.Controller)
+		.to(CatalogController)
+		.whenTargetNamed('CatalogController');
+
+	container.bind<restinterfaces.Controller>(TYPE.Controller)
+		.to(LoginController)
+		.whenTargetNamed('LoginController');
 
 
 
