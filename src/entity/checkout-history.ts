@@ -42,6 +42,6 @@ export class CheckoutHistory {
 	public note: string;
 
 	public isCheckedOut(): boolean {
-		return this.returnDate == undefined || this.userReturningItem == undefined;
+		return !this.returnDate || !this.userReturningItem;
 	}
 }

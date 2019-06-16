@@ -26,7 +26,7 @@ export class JWTService {
 			subject:  user.id,
 			audience:  process.env.JWT_AUDIENCE,
 			expiresIn:  "12h",
-			algorithm:  "RS256"
+			algorithm:  "RS256",
 		};
 
 		return jwt.sign(payload, privateKey, signOptions);

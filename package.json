@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "tsc && jest ./src/**/*.ts",
+    "test": "tsc && ENVIRONMENT_NAME=test jest ./src/**/*.ts",
+    "travis-ci-test": "ENVIRONMENT_NAME=travis jest ./src/**/*.ts",
     "migrations-generate": "tsc && typeorm migration:generate -n",
     "migrations-run": "typeorm migration:run",
     "fixtures": "fixtures ./src/fixture  --config=ormconfig.json",
@@ -15,7 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/restify": "^7.2.11",
     "env": "0.0.2",
     "express": "^4.16.4",
     "inversify": "^5.0.1",
@@ -34,7 +34,9 @@
     "@types/jsonwebtoken": "^8.3.2",
     "@types/mysql": "^2.15.6",
     "@types/node": "^12.0.2",
+    "@types/restify": "^7.2.11",
     "@types/supertest": "^2.0.7",
+    "codecov": "^3.5.0",
     "jest": "^24.8.0",
     "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",

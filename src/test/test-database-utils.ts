@@ -22,10 +22,10 @@ export const createConnectionTest = async ( dbName: string ) => {
 		const connection = await createConnection( {
 			name: dbName,
 			type: "mysql",
-			host: "localhost",
+			host: process.env['DB_HOST'],
 			port: 3306,
-			username: "root",
-			password: "",
+			username: process.env['DB_USER'],
+			password: process.env['DB_PASSWORD'],
 			database: dbName,
 			bigNumberStrings: false, // Prevent orm from serializing number to string
 			entities: [
@@ -64,9 +64,10 @@ const createDatabase = async (dbName: string) => {
 
 const runNativeQuery = async (queryString: string) => {
 	const nativeConnection = mysql.createConnection( {
-		host: 'localhost',
-		user: 'root',
-		password: '',
+		host: process.env['DB_HOST'],
+		port: 3306,
+		user: process.env['DB_USER'],
+		password: process.env['DB_PASSWORD'],
 	} );
 	await new Promise( ( res, rej ) => {
 		nativeConnection.query( queryString, ( error, result ) => {
