@@ -1,20 +1,20 @@
 import { Controller, Post, interfaces,  } from 'inversify-restify-utils';
 import { inject, injectable } from "inversify";
 import { Request, Response } from 'restify';
-import { Repository } from "typeorm";
-import { User } from "../entity/user";
 import { JWTService } from "../service/jwt.service";
 import { TYPES } from "../container/types";
+import { UserService } from "../service/entity/user.service";
 
 
 @injectable()
 @Controller("/")
 export class LoginController implements interfaces.Controller {
 
-	constructor(@inject(TYPES.UserRepository) private userRepository: Repository<User>,
+	constructor(@inject(TYPES.UserService) private userService: UserService,
 	            private jwtService: JWTService) {}
 
-	@Post("login")
+	// always start with forward slash
+	@Post("/login")
 	async login(req: Request, res: Response) {
 
 		const rfid = req.body.rfid;
@@ -24,7 +24,7 @@ export class LoginController implements interfaces.Controller {
 				.json(401, { 'error': 'RFID number required' });
 		}
 
-		const user = await this.userRepository.findOne({ rfid })
+		const user = await this.userService.findByRfid(rfid);
 
 		if (!user) {
 			return res
@@ -40,7 +40,8 @@ export class LoginController implements interfaces.Controller {
 		const jwtToken = await this.jwtService.generateJWTToken(user);
 
 		return res.json(201, {
-			token: jwtToken
+			token: jwtToken.token,
+			exp: jwtToken.expirationTimestamp
 		});
 	}
 

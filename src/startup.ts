@@ -39,3 +39,4 @@ class Startup
 
 let startup = new Startup();
 startup.server();
+console.log('working');

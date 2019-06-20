@@ -32,10 +32,10 @@ describe('ItemStatusRepository', () => {
 		const loadFixtures = new LoadTestFixtures();
 
 		await loadFixtures.loadFiles([
-			path.join(__dirname,'..','fixture', 'test-item-status-service', 'user.yml'),
-			path.join(__dirname,'..','fixture', 'test-item-status-service', 'catalog.yml'),
-			path.join(__dirname,'..','fixture', 'test-item-status-service', 'item.yml'),
-			path.join(__dirname,'..','fixture', 'test-item-status-service', 'checkout-history.yml')
+			path.join(__dirname,'..', '..','fixture', 'test-item-status-service', 'user.yml'),
+			path.join(__dirname,'..', '..','fixture', 'test-item-status-service', 'catalog.yml'),
+			path.join(__dirname,'..', '..','fixture', 'test-item-status-service', 'item.yml'),
+			path.join(__dirname,'..', '..','fixture', 'test-item-status-service', 'checkout-history.yml')
 		], connection);
 
 		user1 = await userRepository
@@ -60,7 +60,6 @@ describe('ItemStatusRepository', () => {
 		expect((await service.itemsUserCurrentlyHasCheckout(user3.id)).length).toBe(2);
 		expect((await service.itemsUserCurrentlyHasCheckout(user2.id)).length).toBe(1);
 		expect((await service.itemsUserCurrentlyHasCheckout(user1.id)).length).toBe(0);
-		expect(true).toBeTruthy();
 	});
 
 });

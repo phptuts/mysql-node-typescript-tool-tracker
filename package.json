@@ -6,6 +6,7 @@
   "scripts": {
     "test": "tsc && ENVIRONMENT_NAME=test jest ./src/**/*.ts",
     "travis-ci-test": "tsc && ENVIRONMENT_NAME=travis jest ./src/**/*.ts",
+    "test:debug": "node --inspect node_modules/.bin/jest ",
     "migrations-generate": "tsc && typeorm migration:generate -n",
     "migrations-run": "typeorm migration:run",
     "fixtures": "fixtures ./src/fixture  --config=ormconfig.json",

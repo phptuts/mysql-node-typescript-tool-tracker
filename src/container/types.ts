@@ -1,9 +1,8 @@
 
 const TYPES = {
-	CheckoutHistoryRepository: Symbol.for("CheckoutHistoryRepository"),
-	ItemStatusRepository: Symbol.for("ItemStatusRepository"),
-	UserRepository: Symbol.for("UserRepository"),
-	CatalogStatusRepository: Symbol.for("CatalogStatusRepository"),
+	CheckoutHistoryService: Symbol.for("CheckoutHistoryRepository"),
+	ItemStatusService: Symbol.for("ItemStatusRepository"),
+	UserService: Symbol.for("UserRepository"),
 	CatalogStatusService: Symbol.for("CatalogStatusService"),
 	ItemService: Symbol.for("ItemService"),
 	JWTService: Symbol.for("JWTService"),

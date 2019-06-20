@@ -7,7 +7,7 @@ import { PaginateService } from "../paginate.service";
 describe('Catalog Status Service', () => {
 
 	const repository: CatalogStatusRepository|any = {
-		search( page: number, pageSize: number, availableOnly: boolean = false, term: string = '' ): Promise<{ data: CatalogStatus[]; total: number }> {
+		paginatedSearch( page: number, pageSize: number, availableOnly: boolean = false, term: string = '' ): Promise<{ data: CatalogStatus[]; total: number }> {
 			return Promise.resolve({ data: [], total: 0 });
 		}
 	};

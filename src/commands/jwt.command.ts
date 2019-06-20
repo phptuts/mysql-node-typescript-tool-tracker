@@ -20,9 +20,9 @@ async function printAndValidate(email: string) {
 			await userRepository.findOne({ where: { email }})
 		);
 
-		const verifiedUser = await jwtService.verifyJWTToken(jwtToken);
+		const verifiedUser = await jwtService.verifyJWTToken(jwtToken.token);
 
-		console.log(`JWT TOKEN: \n\n${jwtToken}\n\n`);
+		console.log(`JWT TOKEN: \n\n${jwtToken.token}\n\n`);
 		console.log(`JWT IS USER ${JSON.stringify(verifiedUser)}`);
 
 	} catch (e) {

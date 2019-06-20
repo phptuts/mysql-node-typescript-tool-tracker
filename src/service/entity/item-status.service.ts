@@ -1,6 +1,10 @@
 import { ViewEntityService } from "./view-entity.serivce";
 import { ItemStatus } from "../../entity/item-status";
 
+import "reflect-metadata";
+import { injectable } from "inversify";
+
+@injectable()
 export class ItemStatusService extends ViewEntityService<ItemStatus> {
 
 	/**

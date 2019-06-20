@@ -1,11 +1,10 @@
-import { createConnectionTest, dropDatabase } from "../test/test-database-utils";
+import { createConnectionTest } from "../test/test-database-utils";
 import { LoadTestFixtures } from "../test/load-test-fixtures";
 import path from "path";
 import { createContainer } from "../container/container";
 import { TYPES } from "../container/types";
 import { JWTService } from "../service/jwt.service";
-import { Connection, Repository } from "typeorm";
-import { User } from "../entity/user";
+import { Connection } from "typeorm";
 
 import { InversifyRestifyServer } from "inversify-restify-utils";
 import * as bodyParser from 'body-parser';
@@ -15,13 +14,14 @@ import queryParser = plugins.queryParser;
 import request from 'supertest';
 import { Container } from "inversify";
 import dotenv from "dotenv";
+import { UserService } from "../service/entity/user.service";
 
 describe( 'catalog controller', () => {
 
 	const databaseName = 'CatalogController';
 	let app: Server | any;
 	let container: Container;
-	let userRepository: Repository<User>;
+	let userService: UserService;
 	let jwtService: JWTService;
 	let jwtToken;
 	let connection: Connection;
@@ -46,7 +46,7 @@ describe( 'catalog controller', () => {
 			app.use( queryParser() );
 		} ).build();
 
-		userRepository = container.get( TYPES.UserRepository ) as Repository<User>;
+		userService = container.get( TYPES.UserService ) as UserService;
 		jwtService = container.get( TYPES.JWTService ) as JWTService;
 
 		await loadFixtures.loadFiles( [
@@ -56,139 +56,264 @@ describe( 'catalog controller', () => {
 			path.join( __dirname, '..', 'fixture', 'test-item-status-service', 'checkout-history.yml' )
 		], connection );
 
-		const user = await userRepository.findOne( { email: 'test-tool-checkout-service_1@gmail.com' } );
-			console.log(user, 'user was reached');
+		const user = await userService.findByEmail(  'test-tool-checkout-service_1@gmail.com' );
 		jwtToken = await jwtService.generateJWTToken( user );
-		//
-		console.log( jwtToken, 'jwt token' );
 	} );
 
 	afterAll( async () => {
 		await connection.close();
-		await dropDatabase( databaseName );
+		//await dropDatabase( databaseName );
 	} );
 
+	describe('basic pagination', () => {
 
-	it( 'should be able to go to page 1 ',  ( done ) => {
+		it( 'should be able to go to page 1 ', ( done ) => {
 
-		const page1 = {
-			"data": [
-				{
-					"catalogId": expect.any( String ),
-					"name": "Hammer",
-					"description": "Hammer",
-					"numberOfItems": 3,
-					"numberOfItemCheckedOut": 3,
-					"numberOfItemsDamaged": 0,
-					"numberOfItemAvailable": 0,
-					"canCheckout": false
+			const page1 = {
+				"data": [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Hammer",
+						"description": "Hammer",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 3,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 0,
+						"canCheckout": false
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 1,
+					"lastPage": false,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 3
 				}
-			],
-			"meta": {
-				"pageSize": 1,
-				"currentPage": 1,
-				"lastPage": false,
-				"type": "CATALOG_STATUS",
-				"numberOfPages": 3
-			}
-		};
+			};
 
-		request( app )
-			.get( "/catalog-search?page=1" )
-			.set( "Authorization", `Bearer ${jwtToken}` )
-			.expect( 200 )
-			.expect( function ( res: any ) {
-				expect( res.body ).toEqual( page1 );
-			} )
-			.end( function ( err, res ) {
-				if (err) {
-					throw err;
+			request( app )
+				.get( "/catalog-search" )
+				.query( { page: '1' } )
+				.set( "Authorization", `Bearer ${jwtToken}` )
+				.expect( function ( res: any ) {
+					expect( res.body ).toEqual( page1 );
+				} )
+				.end(  ( err ) => {
+					if (err) {
+						throw err;
+					}
+					done();
+				} );
+
+
+		} );
+
+		it( 'should be able to go to page 2', ( done ) => {
+
+			const page2 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Nail Gun",
+						"description": "Nail Gun",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 1,
+						"numberOfItemAvailable": 2,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 2,
+					"lastPage": false,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 3
 				}
-				done();
-			} );
+			};
 
 
-	} );
+			request( app )
+				.get( "/catalog-search?page=2" )
+				.set( "Authorization", `Bearer ${jwtToken}` )
+				.expect( 200 )
+				.expect( function ( res: any ) {
+					expect( res.body ).toEqual( page2 );
+				} )
+				.end(  ( err ) => {
+					if (err) {
+						throw err;
+					}
+					done();
+				} );
 
-	it( 'should be able to go to page 2',  ( done ) => {
 
+		} );
 
-		const page2 = {
-			data: [
-				{
-					"catalogId": expect.any( String ),
-					"name": "Nail Gun",
-					"description": "Nail Gun",
-					"numberOfItems": 3,
-					"numberOfItemCheckedOut": 0,
-					"numberOfItemsDamaged": 1,
-					"numberOfItemAvailable": 2,
-					"canCheckout": true
+		it( 'should be able to go to page 3', ( done ) => {
+
+			const page3 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Screw Driver",
+						"description": "Screw Driver",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 3,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 3,
+					"lastPage": true,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 3
 				}
-			],
-			"meta": {
-				"pageSize": 1,
-				"currentPage": 2,
-				"lastPage": false,
-				"type": "CATALOG_STATUS",
-				"numberOfPages": 3
-			}
-		};
+			};
 
+			request( app )
+				.get( "/catalog-search?page=3" )
+				.set( "Authorization", `Bearer ${jwtToken}` )
+				.expect( 200 )
+				.expect( function ( res: any ) {
+					expect( res.body ).toEqual( page3 );
+				} )
+				.end(  ( err ) => {
+					if (err) {
+						throw err;
+					}
+					done();
+				} );
+		} );
+	});
 
-		request( app )
-			.get( "/catalog-search?page=2" )
-			.set( "Authorization", `Bearer ${jwtToken}` )
-			.expect( 200 )
-			.expect( function ( res: any ) {
-				expect( res.body ).toEqual( page2 );
-			} )
-			.end( function ( err, res ) {
-				if (err) {
-					throw err;
+	describe('pagination with available only', () => {
+
+		it( 'should be able to go to page 1', ( done ) => {
+
+			const page2 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Nail Gun",
+						"description": "Nail Gun",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 1,
+						"numberOfItemAvailable": 2,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 1,
+					"lastPage": false,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 2
 				}
-				done();
-			} );
+			};
 
 
-	} );
+			request( app )
+				.get( "/catalog-search?page=1&availableOnly=1" )
+				.set( "Authorization", `Bearer ${jwtToken}` )
+				.expect( 200 )
+				.expect( function ( res: any ) {
+					expect( res.body ).toEqual( page2 );
+				} )
+				.end(  ( err ) => {
+					if (err) {
+						throw err;
+					}
+					done();
+				} );
 
-	it( 'should be able to go to page 3',  ( done ) => {
 
-		const page3 = {
-			data: [
-				{
-					"catalogId": expect.any( String ),
-					"name": "Screw Driver",
-					"description": "Screw Driver",
-					"numberOfItems": 3,
-					"numberOfItemCheckedOut": 0,
-					"numberOfItemsDamaged": 0,
-					"numberOfItemAvailable": 3,
-					"canCheckout": true
+		} );
+
+		it( 'should be able to go to page 2', ( done ) => {
+
+			const page3 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Screw Driver",
+						"description": "Screw Driver",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 3,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 2,
+					"lastPage": true,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 2
 				}
-			],
-			"meta": {
-				"pageSize": 1,
-				"currentPage": 3,
-				"lastPage": true,
-				"type": "CATALOG_STATUS",
-				"numberOfPages": 3
-			}
-		};
+			};
 
-		request( app )
-			.get( "/catalog-search?page=3" )
-			.set( "Authorization", `Bearer ${jwtToken}` )
-			.expect( 200 )
-			.expect( function ( res: any ) {
-				expect( res.body ).toEqual( page3 );
-			} )
-			.end( function ( err, res ) {
-				if (err) {
-					throw err;
+			request( app )
+				.get( "/catalog-search?page=2&availableOnly=1" )
+				.set( "Authorization", `Bearer ${jwtToken}` )
+				.expect( 200 )
+				.expect( function ( res: any ) {
+					expect( res.body ).toEqual( page3 );
+				} )
+				.end(  ( err ) => {
+					if (err) {
+						throw err;
+					}
+					done();
+				} );
+		} );
+	});
+
+	describe('Basic Search test', () => {
+		it( 'Search Hammer', ( done ) => {
+
+			const hammerPage = {
+				"data": [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Hammer",
+						"description": "Hammer",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 3,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 0,
+						"canCheckout": false
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 1,
+					"lastPage": true,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 1
 				}
-				done();
-			} );
-	} );
+			};
+
+			request( app )
+				.get( "/catalog-search?term=Hammer" )
+				.set( "Authorization", `Bearer ${jwtToken}` )
+				.expect( 200 )
+				.expect( function ( res: any ) {
+					expect( res.body ).toEqual( hammerPage );
+				} )
+				.end(  ( err ) => {
+					if (err) {
+						throw err;
+					}
+					done();
+				} );
+		} );
+	});
 } );
+
+

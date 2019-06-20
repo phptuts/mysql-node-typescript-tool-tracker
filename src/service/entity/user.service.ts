@@ -9,6 +9,8 @@ export class UserService extends EntityService<User>{
 		return await this.repository.findOne({ rfid });
 	}
 
-
+	public async findByEmail(email: string) {
+		return await this.repository.findOne({ email });
+	}
 
 }

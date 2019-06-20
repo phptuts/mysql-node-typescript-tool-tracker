@@ -2,7 +2,7 @@ import { Container } from "inversify";
 import { TYPES } from "./types";
 import { interfaces as restinterfaces, TYPE } from "inversify-restify-utils";
 import { CatalogController } from "../controller/catalog.controller";
-import { getCustomRepository, getManager, getRepository, Repository } from "typeorm";
+import { getCustomRepository, getRepository } from "typeorm";
 import { CatalogStatusRepository } from "../repository/catalog-status.repository";
 import { User } from "../entity/user";
 import { CheckoutHistory } from "../entity/checkout-history";
@@ -11,6 +11,11 @@ import { LoginController } from "../controller/login.controller";
 import { UserService } from "../service/entity/user.service";
 import { ItemStatusService } from "../service/entity/item-status.service";
 import { ItemStatus } from "../entity/item-status";
+import { EntityService } from "../service/entity/entity.service";
+import { CatalogStatusService } from "../service/entity/catalog-status.service";
+import { PaginateService } from "../service/paginate.service";
+import { CatalogStatus } from "../entity/catalog-status";
+
 
 let container: Container;
 
@@ -23,28 +28,31 @@ export const createContainer = (databaseConnectionName = "default") => {
 	});
 
 	container
-		.bind<CatalogStatusRepository>(TYPES.CatalogStatusRepository)
+		.bind<CatalogStatusService>(TYPES.CatalogStatusService)
 		.toDynamicValue( () => {
-			return getCustomRepository(CatalogStatusRepository, databaseConnectionName);
+
+			console.log('this was called');
+			const repository = getCustomRepository<CatalogStatusRepository>(CatalogStatusRepository, databaseConnectionName);
+
+			return new CatalogStatusService(new PaginateService(), repository);
 		});
 
 	container
-		.bind<ItemStatusService>(TYPES.ItemStatusRepository)
+		.bind<ItemStatusService>(TYPES.ItemStatusService)
 		.toDynamicValue( () => {
 			return new ItemStatusService(getRepository(ItemStatus));
 		});
 
 	container
-		.bind<Repository<User>>(TYPES.UserRepository)
+		.bind<EntityService<User>>(TYPES.UserService)
 		.toDynamicValue( () => {
-			console.log('in here');
-			return getRepository(User, databaseConnectionName);
+			return new UserService(getRepository(User, databaseConnectionName));
 		});
 
 	container
-		.bind<Repository<CheckoutHistory>>(TYPES.CheckoutHistoryRepository)
+		.bind<EntityService<CheckoutHistory>>(TYPES.CheckoutHistoryService)
 		.toDynamicValue(() => {
-			return getRepository(CheckoutHistory, databaseConnectionName);
+			return new EntityService<CheckoutHistory>(getRepository(CheckoutHistory, databaseConnectionName));
 		});
 
 

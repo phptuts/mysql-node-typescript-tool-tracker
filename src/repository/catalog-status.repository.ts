@@ -6,12 +6,12 @@ import { injectable } from "inversify";
 @EntityRepository(CatalogStatus)
 export class CatalogStatusRepository extends Repository<CatalogStatus>  {
 
-	async search(page: number, pageSize: number, availableOnly = false, term = ''): Promise<{
+	async paginatedSearch( page: number, pageSize: number, availableOnly = false, term = ''): Promise<{
 		data: CatalogStatus[],
 		total: number
 	}>  {
-		const findOptions: FindManyOptions<CatalogStatus>| any = { where: {} };
 
+		const findOptions: FindManyOptions<CatalogStatus>| any = { where: {} };
 		if (availableOnly) {
 			findOptions.where.numberOfItemAvailable = MoreThan(0);
 		}
