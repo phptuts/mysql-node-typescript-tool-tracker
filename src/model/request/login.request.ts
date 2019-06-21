@@ -1,4 +1,4 @@
-import { Length } from "class-validator";
+import { Length, Min } from "class-validator";
 
 export class LoginRequest {
 
