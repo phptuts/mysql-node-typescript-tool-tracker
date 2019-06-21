@@ -53,7 +53,6 @@ export class JWTService {
 			issuer:  process.env.JWT_ISSUER,
 			subject:  decoded.sub,
 			audience:  process.env.JWT_AUDIENCE,
-			expiresIn:  "12h",
 			algorithms: ["RS256"]
 		};
 

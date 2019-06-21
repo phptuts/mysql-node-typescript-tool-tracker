@@ -1,4 +1,7 @@
 import { Column, Entity, Generated, PrimaryColumn } from "typeorm";
+import { Min, IsNumber } from "class-validator";
+
+
 
 @Entity('user')
 export class User {
@@ -22,6 +25,7 @@ export class User {
 	@Column({ type: 'boolean', nullable: false, default: true, name: 'block_checkout' })
 	blockCheckout: boolean;
 
+	@Min(5, { groups: ['login'] })
 	@Column({ type: 'varchar', nullable: false, name: 'rfid' })
 	rfid: string;
 

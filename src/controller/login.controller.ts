@@ -4,6 +4,8 @@ import { Request, Response } from 'restify';
 import { JWTService } from "../service/jwt.service";
 import { TYPES } from "../container/types";
 import { UserService } from "../service/entity/user.service";
+import { validate } from "class-validator";
+import { LoginRequest } from "../model/request/login.request";
 
 
 @injectable()
@@ -17,14 +19,17 @@ export class LoginController implements interfaces.Controller {
 	@Post("/login")
 	async login(req: Request, res: Response) {
 
-		const rfid = req.body.rfid;
+		const loginRequest = new LoginRequest(req.body.rfid || '');
 
-		if (!rfid) {
+		const errors = await validate(loginRequest);
+
+		if (errors.length > 0) {
+			console.log(errors);
 			return res
 				.json(401, { 'error': 'RFID number required' });
 		}
 
-		const user = await this.userService.findByRfid(rfid);
+		const user = await this.userService.findByRfid(loginRequest.rfid);
 
 		if (!user) {
 			return res

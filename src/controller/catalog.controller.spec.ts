@@ -1,4 +1,4 @@
-import { createConnectionTest } from "../test/test-database-utils";
+import { createConnectionTest, dropDatabase } from "../test/test-database-utils";
 import { LoadTestFixtures } from "../test/load-test-fixtures";
 import path from "path";
 import { createContainer } from "../container/container";
@@ -57,17 +57,17 @@ describe( 'catalog controller', () => {
 		], connection );
 
 		const user = await userService.findByEmail(  'test-tool-checkout-service_1@gmail.com' );
-		jwtToken = await jwtService.generateJWTToken( user );
+		jwtToken = (await jwtService.generateJWTToken( user )).token;
 	} );
 
 	afterAll( async () => {
 		await connection.close();
-		//await dropDatabase( databaseName );
+		await dropDatabase( databaseName );
 	} );
 
 	describe('basic pagination', () => {
 
-		it( 'should be able to go to page 1 ', ( done ) => {
+		it( 'should be able to go to page 1 ', async (  ) => {
 
 			const page1 = {
 				"data": [
@@ -91,24 +91,16 @@ describe( 'catalog controller', () => {
 				}
 			};
 
-			request( app )
-				.get( "/catalog-search" )
-				.query( { page: '1' } )
-				.set( "Authorization", `Bearer ${jwtToken}` )
-				.expect( function ( res: any ) {
-					expect( res.body ).toEqual( page1 );
-				} )
-				.end(  ( err ) => {
-					if (err) {
-						throw err;
-					}
-					done();
-				} );
+			const response = await request( app )
+				.get( "/catalog-search?page=1" )
+				.set( "Authorization", `Bearer ${jwtToken}` );
 
+			expect(response.status).toBe(200);
+			expect(response.body).toEqual( page1 );
 
 		} );
 
-		it( 'should be able to go to page 2', ( done ) => {
+		it( 'should be able to go to page 2', async (  ) => {
 
 			const page2 = {
 				data: [
@@ -133,24 +125,16 @@ describe( 'catalog controller', () => {
 			};
 
 
-			request( app )
+			const response = await request( app )
 				.get( "/catalog-search?page=2" )
-				.set( "Authorization", `Bearer ${jwtToken}` )
-				.expect( 200 )
-				.expect( function ( res: any ) {
-					expect( res.body ).toEqual( page2 );
-				} )
-				.end(  ( err ) => {
-					if (err) {
-						throw err;
-					}
-					done();
-				} );
+				.set( "Authorization", `Bearer ${jwtToken}` );
 
+			expect(response.status).toBe(200);
+			expect(response.body).toEqual( page2 );
 
 		} );
 
-		it( 'should be able to go to page 3', ( done ) => {
+		it( 'should be able to go to page 3', async (  ) => {
 
 			const page3 = {
 				data: [
@@ -174,25 +158,19 @@ describe( 'catalog controller', () => {
 				}
 			};
 
-			request( app )
+			const response = await request( app )
 				.get( "/catalog-search?page=3" )
-				.set( "Authorization", `Bearer ${jwtToken}` )
-				.expect( 200 )
-				.expect( function ( res: any ) {
-					expect( res.body ).toEqual( page3 );
-				} )
-				.end(  ( err ) => {
-					if (err) {
-						throw err;
-					}
-					done();
-				} );
+				.set( "Authorization", `Bearer ${jwtToken}` );
+
+			expect(response.status).toBe(200);
+			expect(response.body).toEqual( page3 );
+
 		} );
 	});
 
 	describe('pagination with available only', () => {
 
-		it( 'should be able to go to page 1', ( done ) => {
+		it( 'should be able to go to page 1', async (  ) => {
 
 			const page2 = {
 				data: [
@@ -217,24 +195,17 @@ describe( 'catalog controller', () => {
 			};
 
 
-			request( app )
+			const response = await request( app )
 				.get( "/catalog-search?page=1&availableOnly=1" )
-				.set( "Authorization", `Bearer ${jwtToken}` )
-				.expect( 200 )
-				.expect( function ( res: any ) {
-					expect( res.body ).toEqual( page2 );
-				} )
-				.end(  ( err ) => {
-					if (err) {
-						throw err;
-					}
-					done();
-				} );
+				.set( "Authorization", `Bearer ${jwtToken}` );
+
+			expect(response.status).toBe(200);
+			expect( response.body ).toEqual( page2 );
 
 
 		} );
 
-		it( 'should be able to go to page 2', ( done ) => {
+		it( 'should be able to go to page 2', async (  ) => {
 
 			const page3 = {
 				data: [
@@ -258,24 +229,19 @@ describe( 'catalog controller', () => {
 				}
 			};
 
-			request( app )
+			const response = await request( app )
 				.get( "/catalog-search?page=2&availableOnly=1" )
-				.set( "Authorization", `Bearer ${jwtToken}` )
-				.expect( 200 )
-				.expect( function ( res: any ) {
-					expect( res.body ).toEqual( page3 );
-				} )
-				.end(  ( err ) => {
-					if (err) {
-						throw err;
-					}
-					done();
-				} );
+				.set( "Authorization", `Bearer ${jwtToken}` );
+
+
+			expect(response.status).toBe(200);
+			expect( response.body ).toEqual( page3 );
+
 		} );
 	});
 
 	describe('Basic Search test', () => {
-		it( 'Search Hammer', ( done ) => {
+		it( 'Search Hammer', async (  ) => {
 
 			const hammerPage = {
 				"data": [
@@ -299,19 +265,13 @@ describe( 'catalog controller', () => {
 				}
 			};
 
-			request( app )
+			const response = await request( app )
 				.get( "/catalog-search?term=Hammer" )
-				.set( "Authorization", `Bearer ${jwtToken}` )
-				.expect( 200 )
-				.expect( function ( res: any ) {
-					expect( res.body ).toEqual( hammerPage );
-				} )
-				.end(  ( err ) => {
-					if (err) {
-						throw err;
-					}
-					done();
-				} );
+				.set( "Authorization", `Bearer ${jwtToken}` );
+
+			expect(response.status).toBe(200);
+			expect( response.body ).toEqual( hammerPage );
+
 		} );
 	});
 } );
