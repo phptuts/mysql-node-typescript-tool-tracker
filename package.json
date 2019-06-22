@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "tsc && ENVIRONMENT_NAME=test jest ./src/**/*.ts",
+    "test": "tsc && ENVIRONMENT_NAME=test jest  ./*.ts",
     "travis-ci-test": "tsc && ENVIRONMENT_NAME=travis jest ./src/**/*.ts",
     "test:debug": "node --inspect node_modules/.bin/jest ",
     "migrations-generate": "tsc && typeorm migration:generate -n",

@@ -70,7 +70,7 @@ describe( 'login controller', () => {
 	} );
 
 
-	it( 'Should return a 401 if no rfid is sent ', async (  ) => {
+	it( 'Should return a 401 if no rfid is sent ', async ( done ) => {
 
 		const response = await request( app )
 			.post( "/login" );
@@ -78,9 +78,10 @@ describe( 'login controller', () => {
 		expect(response.status).toBe(401);
 		expect( response.body ).toEqual( { 'error': 'RFID number required' } );
 
+		done();
 	} );
 
-	it( 'Should return a 403 for invalid rfid ', async (  ) => {
+	it( 'Should return a 403 for invalid rfid ', async ( done ) => {
 
 		const response = await request( app )
 			.post( "/login" )
@@ -89,9 +90,10 @@ describe( 'login controller', () => {
 		expect( response.status ).toBe( 403 );
 		expect( response.body ).toEqual( { 'error': 'Invalid RFID Number' } );
 
+		done();
 	} );
 
-	it( 'Should return a 403 for disabled user ', async (  ) => {
+	it( 'Should return a 403 for disabled user ', async ( done ) => {
 
 		const response = await request( app )
 			.post( "/login" )
@@ -100,9 +102,10 @@ describe( 'login controller', () => {
 		expect( response.status ).toBe( 403 )
 		expect( response.body ).toEqual( { 'error': 'You are blocked from logging in, please contact the admin.' } );
 
+		done();
 	} );
 
-	it( 'should return a jwt token for enabled user', async (  ) => {
+	it( 'should return a jwt token for enabled user', async ( done ) => {
 		const response = await request( app )
 			.post( "/login" )
 			.send( { 'rfid': enabledUser.rfid } );
@@ -115,6 +118,8 @@ describe( 'login controller', () => {
 
 		const user = await jwtService.verifyJWTToken( response.body.token ) as User;
 		expect( user.email ).toBe( enabledUser.email );
+
+		done();
 	} );
 
 

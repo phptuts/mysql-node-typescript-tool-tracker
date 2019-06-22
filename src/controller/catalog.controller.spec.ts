@@ -67,7 +67,7 @@ describe( 'catalog controller', () => {
 
 	describe('basic pagination', () => {
 
-		it( 'should be able to go to page 1 ', async (  ) => {
+		it( 'should be able to go to page 1 ', async ( done ) => {
 
 			const page1 = {
 				"data": [
@@ -98,9 +98,10 @@ describe( 'catalog controller', () => {
 			expect(response.status).toBe(200);
 			expect(response.body).toEqual( page1 );
 
+			done();
 		} );
 
-		it( 'should be able to go to page 2', async (  ) => {
+		it( 'should be able to go to page 2', async ( done ) => {
 
 			const page2 = {
 				data: [
@@ -132,9 +133,10 @@ describe( 'catalog controller', () => {
 			expect(response.status).toBe(200);
 			expect(response.body).toEqual( page2 );
 
+			done();
 		} );
 
-		it( 'should be able to go to page 3', async (  ) => {
+		it( 'should be able to go to page 3', async ( done ) => {
 
 			const page3 = {
 				data: [
@@ -165,12 +167,13 @@ describe( 'catalog controller', () => {
 			expect(response.status).toBe(200);
 			expect(response.body).toEqual( page3 );
 
+			done();
 		} );
 	});
 
 	describe('pagination with available only', () => {
 
-		it( 'should be able to go to page 1', async (  ) => {
+		it( 'should be able to go to page 1', async ( done ) => {
 
 			const page2 = {
 				data: [
@@ -202,10 +205,10 @@ describe( 'catalog controller', () => {
 			expect(response.status).toBe(200);
 			expect( response.body ).toEqual( page2 );
 
-
+			done();
 		} );
 
-		it( 'should be able to go to page 2', async (  ) => {
+		it( 'should be able to go to page 2', async ( done ) => {
 
 			const page3 = {
 				data: [
@@ -237,11 +240,12 @@ describe( 'catalog controller', () => {
 			expect(response.status).toBe(200);
 			expect( response.body ).toEqual( page3 );
 
+			done();
 		} );
 	});
 
 	describe('Basic Search test', () => {
-		it( 'Search Hammer', async (  ) => {
+		it( 'Search Hammer', async ( done ) => {
 
 			const hammerPage = {
 				"data": [
@@ -272,6 +276,7 @@ describe( 'catalog controller', () => {
 			expect(response.status).toBe(200);
 			expect( response.body ).toEqual( hammerPage );
 
+			done();
 		} );
 	});
 } );

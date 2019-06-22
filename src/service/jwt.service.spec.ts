@@ -64,6 +64,21 @@ describe('JWT Service', () => {
 		expect(retrievedUser).toBeFalsy();
 		expect(userServiceFindByIdSpy).toHaveBeenCalledWith('fake_user_id');
 
-	})
+	});
+
+	it ('should return false if something throws an error', async () => {
+
+		const user = new User();
+		user.id = 'fake_user_id';
+		user.roles = [];
+
+		userServiceFindByIdSpy.mockRejectedValue(new Error('Database Down'));
+		const response = await service.generateJWTToken(user);
+		const retrievedUser = await service.verifyJWTToken(response.token);
+
+		expect(retrievedUser).toBeFalsy();
+		expect(userServiceFindByIdSpy).toHaveBeenCalledWith('fake_user_id');
+
+	});
 
 });

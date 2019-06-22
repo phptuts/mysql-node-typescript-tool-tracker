@@ -14,7 +14,6 @@ import { ItemStatus } from "../entity/item-status";
 import { EntityService } from "../service/entity/entity.service";
 import { CatalogStatusService } from "../service/entity/catalog-status.service";
 import { PaginateService } from "../service/paginate.service";
-import { CatalogStatus } from "../entity/catalog-status";
 
 
 let container: Container;
@@ -27,20 +26,21 @@ export const createContainer = (databaseConnectionName = "default") => {
 		skipBaseClassChecks: true
 	});
 
+	container.bind<PaginateService>(TYPES.PaginatedService)
+		.toService(PaginateService);
+
 	container
 		.bind<CatalogStatusService>(TYPES.CatalogStatusService)
 		.toDynamicValue( () => {
-
-			console.log('this was called');
 			const repository = getCustomRepository<CatalogStatusRepository>(CatalogStatusRepository, databaseConnectionName);
 
-			return new CatalogStatusService(new PaginateService(), repository);
+			return new CatalogStatusService(container.get(TYPES.PaginatedService), repository);
 		});
 
 	container
 		.bind<ItemStatusService>(TYPES.ItemStatusService)
 		.toDynamicValue( () => {
-			return new ItemStatusService(getRepository(ItemStatus));
+			return new ItemStatusService(getRepository(ItemStatus, databaseConnectionName));
 		});
 
 	container

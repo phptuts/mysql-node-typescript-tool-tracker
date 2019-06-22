@@ -19,7 +19,7 @@ describe('Catalog Status Service', () => {
 	beforeEach(async () => {
 
 		service = new CatalogStatusService(new PaginateService(), repository);
-		repositorySpy = jest.spyOn(repository, 'search');
+		repositorySpy = jest.spyOn(repository, 'paginatedSearch');
 	});
 
 
