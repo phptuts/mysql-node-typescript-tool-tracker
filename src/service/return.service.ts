@@ -4,11 +4,14 @@ import { CheckoutHistory } from "../entity/checkout-history";
 import { User } from "../entity/user";
 import { Item } from "../entity/item";
 import { ItemStatus } from "../entity/item-status";
+import { injectable } from "inversify";
+import { EntityService } from "./entity/entity.service";
 
+@injectable()
 export class ReturnService {
 
-	constructor(private checkoutHistoryRepository: Repository<CheckoutHistory>,
-	            private itemRepository: Repository<Item>) {}
+	constructor(private checkoutHistoryService: EntityService<CheckoutHistory>,
+	            private itemService: EntityService<Item>) {}
 
 	/**
 	 * Returns an item
@@ -20,8 +23,8 @@ export class ReturnService {
 		Promise<{checkOutHistory: CheckoutHistory, item: Item}> {
 
 		const [item, checkOutHistory] = await Promise.all<Item, CheckoutHistory>([
-			this.itemRepository.findOne(itemStatus.itemId),
-			this.checkoutHistoryRepository.findOne( itemStatus.checkoutHistoryId )
+			this.itemService.findById(itemStatus.itemId),
+			this.checkoutHistoryService.findById( itemStatus.checkoutHistoryId )
 		]);
 
 		checkOutHistory.userReturningItem = user;
@@ -32,8 +35,8 @@ export class ReturnService {
 		item.damaged = isDamaged;
 
 		await Promise.all([
-			this.checkoutHistoryRepository.save( checkOutHistory ),
-			this.itemRepository.save(item)
+			this.checkoutHistoryService.save( checkOutHistory ),
+			this.itemService.save(item)
 		]);
 
 		return {

@@ -4,8 +4,7 @@ import path from "path";
 import { createContainer } from "../container/container";
 import { TYPES } from "../container/types";
 import { JWTService } from "../service/jwt.service";
-import { Connection, Repository } from "typeorm";
-import { User } from "../entity/user";
+import { Connection } from "typeorm";
 
 import { InversifyRestifyServer } from "inversify-restify-utils";
 import * as bodyParser from 'body-parser';
@@ -15,13 +14,14 @@ import queryParser = plugins.queryParser;
 import request from 'supertest';
 import { Container } from "inversify";
 import dotenv from "dotenv";
+import { UserService } from "../service/entity/user.service";
 
 describe( 'catalog controller', () => {
 
 	const databaseName = 'CatalogController';
 	let app: Server | any;
 	let container: Container;
-	let userRepository: Repository<User>;
+	let userService: UserService;
 	let jwtService: JWTService;
 	let jwtToken;
 	let connection: Connection;
@@ -46,7 +46,7 @@ describe( 'catalog controller', () => {
 			app.use( queryParser() );
 		} ).build();
 
-		userRepository = container.get( TYPES.UserRepository ) as Repository<User>;
+		userService = container.get( TYPES.UserService ) as UserService;
 		jwtService = container.get( TYPES.JWTService ) as JWTService;
 
 		await loadFixtures.loadFiles( [
@@ -56,11 +56,8 @@ describe( 'catalog controller', () => {
 			path.join( __dirname, '..', 'fixture', 'test-item-status-service', 'checkout-history.yml' )
 		], connection );
 
-		const user = await userRepository.findOne( { email: 'test-tool-checkout-service_1@gmail.com' } );
-			console.log(user, 'user was reached');
-		jwtToken = await jwtService.generateJWTToken( user );
-		//
-		console.log( jwtToken, 'jwt token' );
+		const user = await userService.findByEmail(  'test-tool-checkout-service_1@gmail.com' );
+		jwtToken = (await jwtService.generateJWTToken( user )).token;
 	} );
 
 	afterAll( async () => {
@@ -68,127 +65,220 @@ describe( 'catalog controller', () => {
 		await dropDatabase( databaseName );
 	} );
 
+	describe('basic pagination', () => {
 
-	it( 'should be able to go to page 1 ',  ( done ) => {
+		it( 'should be able to go to page 1 ', async ( done ) => {
 
-		const page1 = {
-			"data": [
-				{
-					"catalogId": expect.any( String ),
-					"name": "Hammer",
-					"description": "Hammer",
-					"numberOfItems": 3,
-					"numberOfItemCheckedOut": 3,
-					"numberOfItemsDamaged": 0,
-					"numberOfItemAvailable": 0,
-					"canCheckout": false
+			const page1 = {
+				"data": [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Hammer",
+						"description": "Hammer",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 3,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 0,
+						"canCheckout": false
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 1,
+					"lastPage": false,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 3
 				}
-			],
-			"meta": {
-				"pageSize": 1,
-				"currentPage": 1,
-				"lastPage": false,
-				"type": "CATALOG_STATUS",
-				"numberOfPages": 3
-			}
-		};
+			};
 
-		request( app )
-			.get( "/catalog-search?page=1" )
-			.set( "Authorization", `Bearer ${jwtToken}` )
-			.expect( 200 )
-			.expect( function ( res: any ) {
-				expect( res.body ).toEqual( page1 );
-			} )
-			.end( function ( err, res ) {
-				if (err) {
-					throw err;
+			const response = await request( app )
+				.get( "/catalog-search?page=1" )
+				.set( "Authorization", `Bearer ${jwtToken}` );
+
+			expect(response.status).toBe(200);
+			expect(response.body).toEqual( page1 );
+
+			done();
+		} );
+
+		it( 'should be able to go to page 2', async ( done ) => {
+
+			const page2 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Nail Gun",
+						"description": "Nail Gun",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 1,
+						"numberOfItemAvailable": 2,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 2,
+					"lastPage": false,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 3
 				}
-				done();
-			} );
+			};
 
 
-	} );
+			const response = await request( app )
+				.get( "/catalog-search?page=2" )
+				.set( "Authorization", `Bearer ${jwtToken}` );
 
-	it( 'should be able to go to page 2',  ( done ) => {
+			expect(response.status).toBe(200);
+			expect(response.body).toEqual( page2 );
 
+			done();
+		} );
 
-		const page2 = {
-			data: [
-				{
-					"catalogId": expect.any( String ),
-					"name": "Nail Gun",
-					"description": "Nail Gun",
-					"numberOfItems": 3,
-					"numberOfItemCheckedOut": 0,
-					"numberOfItemsDamaged": 1,
-					"numberOfItemAvailable": 2,
-					"canCheckout": true
+		it( 'should be able to go to page 3', async ( done ) => {
+
+			const page3 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Screw Driver",
+						"description": "Screw Driver",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 3,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 3,
+					"lastPage": true,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 3
 				}
-			],
-			"meta": {
-				"pageSize": 1,
-				"currentPage": 2,
-				"lastPage": false,
-				"type": "CATALOG_STATUS",
-				"numberOfPages": 3
-			}
-		};
+			};
 
+			const response = await request( app )
+				.get( "/catalog-search?page=3" )
+				.set( "Authorization", `Bearer ${jwtToken}` );
 
-		request( app )
-			.get( "/catalog-search?page=2" )
-			.set( "Authorization", `Bearer ${jwtToken}` )
-			.expect( 200 )
-			.expect( function ( res: any ) {
-				expect( res.body ).toEqual( page2 );
-			} )
-			.end( function ( err, res ) {
-				if (err) {
-					throw err;
+			expect(response.status).toBe(200);
+			expect(response.body).toEqual( page3 );
+
+			done();
+		} );
+	});
+
+	describe('pagination with available only', () => {
+
+		it( 'should be able to go to page 1', async ( done ) => {
+
+			const page2 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Nail Gun",
+						"description": "Nail Gun",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 1,
+						"numberOfItemAvailable": 2,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 1,
+					"lastPage": false,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 2
 				}
-				done();
-			} );
+			};
 
 
-	} );
+			const response = await request( app )
+				.get( "/catalog-search?page=1&availableOnly=1" )
+				.set( "Authorization", `Bearer ${jwtToken}` );
 
-	it( 'should be able to go to page 3',  ( done ) => {
+			expect(response.status).toBe(200);
+			expect( response.body ).toEqual( page2 );
 
-		const page3 = {
-			data: [
-				{
-					"catalogId": expect.any( String ),
-					"name": "Screw Driver",
-					"description": "Screw Driver",
-					"numberOfItems": 3,
-					"numberOfItemCheckedOut": 0,
-					"numberOfItemsDamaged": 0,
-					"numberOfItemAvailable": 3,
-					"canCheckout": true
+			done();
+		} );
+
+		it( 'should be able to go to page 2', async ( done ) => {
+
+			const page3 = {
+				data: [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Screw Driver",
+						"description": "Screw Driver",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 0,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 3,
+						"canCheckout": true
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 2,
+					"lastPage": true,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 2
 				}
-			],
-			"meta": {
-				"pageSize": 1,
-				"currentPage": 3,
-				"lastPage": true,
-				"type": "CATALOG_STATUS",
-				"numberOfPages": 3
-			}
-		};
+			};
 
-		request( app )
-			.get( "/catalog-search?page=3" )
-			.set( "Authorization", `Bearer ${jwtToken}` )
-			.expect( 200 )
-			.expect( function ( res: any ) {
-				expect( res.body ).toEqual( page3 );
-			} )
-			.end( function ( err, res ) {
-				if (err) {
-					throw err;
+			const response = await request( app )
+				.get( "/catalog-search?page=2&availableOnly=1" )
+				.set( "Authorization", `Bearer ${jwtToken}` );
+
+
+			expect(response.status).toBe(200);
+			expect( response.body ).toEqual( page3 );
+
+			done();
+		} );
+	});
+
+	describe('Basic Search test', () => {
+		it( 'Search Hammer', async ( done ) => {
+
+			const hammerPage = {
+				"data": [
+					{
+						"catalogId": expect.any( String ),
+						"name": "Hammer",
+						"description": "Hammer",
+						"numberOfItems": 3,
+						"numberOfItemCheckedOut": 3,
+						"numberOfItemsDamaged": 0,
+						"numberOfItemAvailable": 0,
+						"canCheckout": false
+					}
+				],
+				"meta": {
+					"pageSize": 1,
+					"currentPage": 1,
+					"lastPage": true,
+					"type": "CATALOG_STATUS",
+					"numberOfPages": 1
 				}
-				done();
-			} );
-	} );
+			};
+
+			const response = await request( app )
+				.get( "/catalog-search?term=Hammer" )
+				.set( "Authorization", `Bearer ${jwtToken}` );
+
+			expect(response.status).toBe(200);
+			expect( response.body ).toEqual( hammerPage );
+
+			done();
+		} );
+	});
 } );
+
+

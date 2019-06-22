@@ -5,51 +5,52 @@ import { Item } from "../entity/item";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { ItemStatus } from "../entity/item-status";
 import { User } from "../entity/user";
+import { EntityService } from "./entity/entity.service";
 
 describe('Return Service', () => {
 
 	let service: ReturnService;
 
-	let checkoutRepositorySaveSpy: jest.SpyInstance;
+	let checkoutHistoryServiceSaveSpy: jest.SpyInstance;
 
-	let checkoutRepositoryFindOneSpy: jest.SpyInstance;
+	let checkoutHistoryServiceFindByIdSpy: jest.SpyInstance;
 
-	let itemRepositoryFindOneSpy: jest.SpyInstance;
+	let itemServiceFindByIdSpy: jest.SpyInstance;
 
-	let itemRepositorySaveSpy: jest.SpyInstance;
+	let itemServiceSaveSpy: jest.SpyInstance;
 
-	let itemRepository: Repository<Item>|any;
+	let itemService: EntityService<Item>|any;
 
-	let checkoutRepository: Repository<CheckoutHistory>|any;
+	let checkoutHistoryService: EntityService<CheckoutHistory>|any;
 
 	beforeEach(() => {
-		itemRepository = {
+		itemService = {
 			save(item: Item): Promise<Item> {
 				return Promise.resolve(undefined);
 			},
 
-			findOne( id: string): Promise<Item | undefined> {
+			findById( id: string): Promise<Item | undefined> {
 				return Promise.resolve(undefined)
 			}
 		};
 
-		checkoutRepository = {
-			save(item: Item): Promise<Item> {
+		checkoutHistoryService = {
+			save(item: Item): Promise<CheckoutHistory> {
 				return Promise.resolve(undefined);
 			},
 
-			findOne( id: string): Promise<Item | undefined> {
+			findById( id: string): Promise<CheckoutHistory | undefined> {
 				return Promise.resolve(undefined)
 			}
 		};
 
-		service = new ReturnService(checkoutRepository, itemRepository);
+		service = new ReturnService(checkoutHistoryService, itemService);
 
-		itemRepositoryFindOneSpy = jest.spyOn(itemRepository, 'findOne');
-		itemRepositorySaveSpy = jest.spyOn(itemRepository, 'save');
+		itemServiceFindByIdSpy = jest.spyOn(itemService, 'findById');
+		itemServiceSaveSpy = jest.spyOn(itemService, 'save');
 
-		checkoutRepositoryFindOneSpy = jest.spyOn(checkoutRepository, 'findOne');
-		checkoutRepositorySaveSpy = jest.spyOn(checkoutRepository, 'save');
+		checkoutHistoryServiceFindByIdSpy = jest.spyOn(checkoutHistoryService, 'findById');
+		checkoutHistoryServiceSaveSpy = jest.spyOn(checkoutHistoryService, 'save');
 	});
 
 	it ('Returns an item to the with the damaged flag and notes saved.', async () => {
@@ -61,24 +62,24 @@ describe('Return Service', () => {
 		const itemInMock = new Item();
 		const checkoutHistory = new CheckoutHistory();
 
-		itemRepositoryFindOneSpy.mockImplementation(() =>
+		itemServiceFindByIdSpy.mockImplementation(() =>
 			Promise.resolve(itemInMock));
-		itemRepositorySaveSpy.mockImplementation(foundItem =>
+		itemServiceSaveSpy.mockImplementation(foundItem =>
 			Promise.resolve(foundItem));
 
-		checkoutRepositoryFindOneSpy.mockImplementation(() =>
+		checkoutHistoryServiceFindByIdSpy.mockImplementation(() =>
 			Promise.resolve(checkoutHistory));
-		checkoutRepositorySaveSpy.mockImplementation(history =>
+		checkoutHistoryServiceSaveSpy.mockImplementation(history =>
 			Promise.resolve(history));
 
 		const { checkOutHistory, item } = await service
 			.returnItem(user, itemStatus, true, 'This item was damaged');
 
-		expect(itemRepositorySaveSpy).toHaveBeenCalledWith(item);
-		expect(itemRepositoryFindOneSpy).toHaveBeenCalledWith('fake_item_id');
+		expect(itemServiceSaveSpy).toHaveBeenCalledWith(item);
+		expect(itemServiceFindByIdSpy).toHaveBeenCalledWith('fake_item_id');
 
-		expect(checkoutRepositorySaveSpy).toHaveBeenCalledWith(checkoutHistory);
-		expect(checkoutRepositoryFindOneSpy).toHaveBeenCalledWith('fake_checkout_history_id');
+		expect(checkoutHistoryServiceSaveSpy).toHaveBeenCalledWith(checkoutHistory);
+		expect(checkoutHistoryServiceFindByIdSpy).toHaveBeenCalledWith('fake_checkout_history_id');
 
 		expect(checkOutHistory.userReturningItem).toBe(user);
 		expect(checkOutHistory.returnDate.toDateString()).toEqual(new Date().toDateString());

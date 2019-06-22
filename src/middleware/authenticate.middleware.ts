@@ -15,6 +15,7 @@ export const authUser = async (req: Request|any, res: Response, next: Next) => {
 		return;
 	}
 
+
 	const jwtService = getContainer().get<JWTService>(TYPES.JWTService);
 	const user = await jwtService.verifyJWTToken(jwtToken);
 

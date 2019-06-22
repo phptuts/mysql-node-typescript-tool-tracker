@@ -1,0 +1,19 @@
+entity: User
+items:
+    user1:
+        email: 'test-user-login_1@gmail.com'
+        password: 'fake'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User1'
+        enabled: true
+        blockCheckout: false
+        rfid: 'rfid_{{random.number}}'
+        roles: ['ROLE_USER', 'ROLE_ADMIN']
+    user2:
+        email: 'test-user-login_2@gmail.com'
+        password: 'fake'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User2'
+        enabled: false
+        blockCheckout: true
+        rfid: 'rfid_{{random.number}}'
+        roles: ['ROLE_USER']
+

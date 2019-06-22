@@ -1,13 +1,13 @@
 import 'jest';
-import { CatalogStatus } from "../entity/catalog-status";
-import { CatalogStatusRepository } from "../repository/catalog-status.repository";
+import { CatalogStatus } from "../../entity/catalog-status";
+import { CatalogStatusRepository } from "../../repository/catalog-status.repository";
 import { CatalogStatusService } from "./catalog-status.service";
-import { PaginateService } from "./paginate.service";
+import { PaginateService } from "../paginate.service";
 
 describe('Catalog Status Service', () => {
 
 	const repository: CatalogStatusRepository|any = {
-		search( page: number, pageSize: number, availableOnly: boolean = false, term: string = '' ): Promise<{ data: CatalogStatus[]; total: number }> {
+		paginatedSearch( page: number, pageSize: number, availableOnly: boolean = false, term: string = '' ): Promise<{ data: CatalogStatus[]; total: number }> {
 			return Promise.resolve({ data: [], total: 0 });
 		}
 	};
@@ -19,7 +19,7 @@ describe('Catalog Status Service', () => {
 	beforeEach(async () => {
 
 		service = new CatalogStatusService(new PaginateService(), repository);
-		repositorySpy = jest.spyOn(repository, 'search');
+		repositorySpy = jest.spyOn(repository, 'paginatedSearch');
 	});
 
 

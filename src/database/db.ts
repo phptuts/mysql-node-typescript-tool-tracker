@@ -10,6 +10,7 @@ dotenv.config();
 
 export const dbConnection =createConnection({
 	type: "mysql",
+	name: 'default',
 	host: process.env.DB_HOST,
 	port: parseInt(process.env.DB_PORT),
 	username: process.env.DB_USER,
@@ -25,5 +26,5 @@ export const dbConnection =createConnection({
 	],
 	bigNumberStrings: false, // This is to prevent the orm from serializing number to string
 	synchronize: true,
-	logging: true
+	logging: false
 });

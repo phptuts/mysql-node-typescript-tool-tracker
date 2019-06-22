@@ -1,50 +1,84 @@
 import 'jest';
 import { JWTService } from "./jwt.service";
-import { ObjectID, Repository } from "typeorm";
 import { User } from "../entity/user";
+import { EntityService } from "./entity/entity.service";
 
 describe('JWT Service', () => {
 
 	let service: JWTService;
 
-	let userRepository: any|Repository<User>;
+	let userService: any|EntityService<User>;
 
-	let userRepositorySpy: jest.SpyInstance;
+	let userServiceFindByIdSpy: jest.SpyInstance;
 
 	beforeEach(() => {
-		userRepository = {
-			findOne( id: string): Promise<User|undefined> {
+		userService = {
+			findById( id: string): Promise<User|undefined> {
 				return Promise.resolve(undefined);
 			}
 		};
 
-		userRepositorySpy = jest.spyOn(userRepository, 'findOne');
-		service = new JWTService(userRepository);
+		userServiceFindByIdSpy = jest.spyOn(userService, 'findById');
+		service = new JWTService(userService);
 	});
 
 	it ('should be able generate a valid jwt token and verify it', async () => {
 		const user = new User();
 		user.id = 'fake_user_id';
-
-		userRepositorySpy.mockImplementation(() => user);
-		const token = await service.generateJWTToken(user);
-		const retrievedUser = await service.verifyJWTToken(token);
+		user.roles = [];
+		const expectedDate = Math.floor(Date.now() / 1000) + 10 * 60;
+		userServiceFindByIdSpy.mockImplementation(() => user);
+		const response = await service.generateJWTToken(user);
+		const retrievedUser = await service.verifyJWTToken(response.token);
 
 		expect(retrievedUser).toBe(user);
-		expect(userRepositorySpy).toHaveBeenCalledWith('fake_user_id');
+		expect(response.expirationTimestamp).toBeGreaterThanOrEqual(expectedDate);
+		expect(userServiceFindByIdSpy).toHaveBeenCalledWith('fake_user_id');
+	});
+
+	it ('should let an admin user login for 30 seconds', async () => {
+		const user = new User();
+		user.id = 'fake_user_id';
+		user.roles = ['ROLE_ADMIN'];
+		const expectedDate = Math.floor(Date.now() / 1000) + 30 * 60;
+
+		userServiceFindByIdSpy.mockImplementation(() => user);
+		const response = await service.generateJWTToken(user);
+		const retrievedUser = await service.verifyJWTToken(response.token);
+
+		expect(retrievedUser).toBe(user);
+		expect(response.expirationTimestamp).toBeGreaterThanOrEqual(expectedDate);
+		expect(userServiceFindByIdSpy).toHaveBeenCalledWith('fake_user_id');
+
 	});
 
 	it ('should return false if a user can not be found', async () => {
 		const user = new User();
 		user.id = 'fake_user_id';
+		user.roles = [];
 
-		userRepositorySpy.mockImplementation(() => undefined);
-		const token = await service.generateJWTToken(user);
-		const retrievedUser = await service.verifyJWTToken(token);
+		userServiceFindByIdSpy.mockImplementation(() => undefined);
+		const response = await service.generateJWTToken(user);
+		const retrievedUser = await service.verifyJWTToken(response.token);
 
 		expect(retrievedUser).toBeFalsy();
-		expect(userRepositorySpy).toHaveBeenCalledWith('fake_user_id');
+		expect(userServiceFindByIdSpy).toHaveBeenCalledWith('fake_user_id');
 
-	})
+	});
+
+	it ('should return false if something throws an error', async () => {
+
+		const user = new User();
+		user.id = 'fake_user_id';
+		user.roles = [];
+
+		userServiceFindByIdSpy.mockRejectedValue(new Error('Database Down'));
+		const response = await service.generateJWTToken(user);
+		const retrievedUser = await service.verifyJWTToken(response.token);
+
+		expect(retrievedUser).toBeFalsy();
+		expect(userServiceFindByIdSpy).toHaveBeenCalledWith('fake_user_id');
+
+	});
 
 });
