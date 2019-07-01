@@ -1,0 +1,13 @@
+entity: Item
+items:
+    already_checkout_out_hammer:
+        catalog: '@checkout_hammer1'
+        rfid: 'rfid_already_checkout_out_hammer'
+        createdBy: '@checkout_user_1'
+        damaged: false
+
+    damage_hammer:
+        catalog: '@checkout_hammer1'
+        rfid: 'rfid_damage_hammer'
+        createdBy: '@checkout_user_2'
+        damaged: true

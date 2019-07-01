@@ -1,11 +1,11 @@
-import { Length, Min } from "class-validator";
+import { IsAlphanumeric,  MinLength } from "class-validator";
+import 'reflect-metadata';
 
 export class LoginRequest {
 
-	@Length(5, 30)
-	public readonly rfid: string;
+	@MinLength(5)
+	@IsAlphanumeric()
+	public rfid: string;
 
-	constructor(rfid: string) {
-		this.rfid = rfid;
-	}
 }
+

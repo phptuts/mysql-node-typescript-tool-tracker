@@ -4,6 +4,8 @@ import { CheckoutHistory } from "../entity/checkout-history";
 import { User } from "../entity/user";
 import { Item } from "../entity/item";
 import { EntityService } from "./entity/entity.service";
+import { ItemStatusService } from "./entity/item-status.service";
+import { ItemStatus } from "../entity/item-status";
 
 
 describe('Checkout Service', () => {
@@ -14,6 +16,10 @@ describe('Checkout Service', () => {
 
 	let checkoutHistoryServiceSaveSpy: jest.SpyInstance;
 
+	let itemStatusService: ItemStatusService|any;
+
+	let itemStatusServiceFindByID: jest.SpyInstance;
+
 	beforeEach(async () => {
 		checkoutHistoryService = {
 			save(checkoutHistory: CheckoutHistory): Promise<CheckoutHistory> {
@@ -21,9 +27,17 @@ describe('Checkout Service', () => {
 			}
 		};
 
-		checkoutHistoryServiceSaveSpy = jest.spyOn(checkoutHistoryService, 'save');
+		itemStatusService = {
+			findById( id: string ): Promise<ItemStatus> {
+				return Promise.resolve(new ItemStatus());
+			}
+		}
 
-		service = new CheckoutService(checkoutHistoryService);
+		checkoutHistoryServiceSaveSpy = jest.spyOn(checkoutHistoryService, 'save')
+
+		itemStatusServiceFindByID = jest.spyOn(itemStatusService, 'findById');
+
+		service = new CheckoutService(checkoutHistoryService, itemStatusService);
 	});
 
 	it ('should create a new checkout entry in the database and save', async () =>{

@@ -1,16 +1,37 @@
-
 export interface MetaResponseModel {
 	type: string
 }
 
-export interface PaginatedMetaModel extends MetaResponseModel{
+export enum ResponseTypes {
+	FORM_ERRORS = 'form_errors',
+	NOT_FOUND = 'not_found',
+	ACCESS_DENIED = 'access_denied',
+	AUTH_TOKEN = 'auth_token'
+}
+
+export interface PaginatedMetaModel extends MetaResponseModel {
 	currentPage: number,
 	pageSize: number,
 	numberOfPages: number,
 	lastPage: boolean,
 }
 
+export interface FormError {
+	property: string;
+
+	messages: { [ key: string ]: string }
+}
+
 export interface ResponseModel<T, M extends MetaResponseModel> {
 	meta: M,
-	data: T|T[]
+	data: T | T[]
 }
+
+export const createResponse = <T>( data: T, responseType: ResponseTypes ): ResponseModel<T, MetaResponseModel> => {
+	return {
+		meta: {
+			type: responseType
+		},
+		data
+	}
+};

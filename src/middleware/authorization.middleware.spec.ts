@@ -49,6 +49,7 @@ describe('Authorization Middleware', () => {
 	it ('should call next if user has right role', async () => {
 		req.user = new User();
 		req.user.roles = ['ROLE_ADMIN'];
+		req.user.enabled = true;
 		await hasRole('ROLE_ADMIN')(req, res, nextSpy);
 		expect(responseSpy).not.toHaveBeenCalled();
 		expect(nextSpy).toHaveBeenCalled();

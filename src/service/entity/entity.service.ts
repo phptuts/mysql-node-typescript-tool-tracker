@@ -1,6 +1,7 @@
 import { Repository } from "typeorm";
 import "reflect-metadata";
 import { injectable } from "inversify";
+import { CheckoutHistory } from "../../entity/checkout-history";
 
 @injectable()
 export class EntityService<T> {

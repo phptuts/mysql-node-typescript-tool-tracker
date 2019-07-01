@@ -1,11 +1,13 @@
-import { Controller, Post, interfaces,  } from 'inversify-restify-utils';
+import { Controller, interfaces, Post, } from 'inversify-restify-utils';
 import { inject, injectable } from "inversify";
-import { Request, Response } from 'restify';
+import { Response } from 'restify';
 import { JWTService } from "../service/jwt.service";
 import { TYPES } from "../container/types";
 import { UserService } from "../service/entity/user.service";
-import { validate } from "class-validator";
 import { LoginRequest } from "../model/request/login.request";
+import { validateRequest } from "../middleware/validate.middleware";
+import { ExtendedRequest } from "../model/request/extend-request";
+import { createResponse, ResponseTypes } from "../model/response/response.model";
 
 
 @injectable()
@@ -16,38 +18,35 @@ export class LoginController implements interfaces.Controller {
 	            private jwtService: JWTService) {}
 
 	// always start with forward slash
-	@Post("/login")
-	async login(req: Request, res: Response) {
+	@Post("/login", validateRequest<LoginRequest>(LoginRequest,null, 403, ResponseTypes.ACCESS_DENIED))
+	async login(req: ExtendedRequest<LoginRequest>, res: Response) {
 
-		const loginRequest = new LoginRequest(req.body.rfid || '');
-
-		const errors = await validate(loginRequest);
-
-		if (errors.length > 0) {
-			console.log(errors);
-			return res
-				.json(401, { 'error': 'RFID number required' });
-		}
-
-		const user = await this.userService.findByRfid(loginRequest.rfid);
+		const user = await this.userService.findByRfid(req.validatedObject.rfid);
 
 		if (!user) {
+			res.status(403);
 			return res
-				.json(403, { 'error': 'Invalid RFID Number' });
+				.json(createResponse<string>(
+					'Invalid RFID', ResponseTypes.ACCESS_DENIED));
 		}
 
 		if (!user.enabled) {
+
+			res.status(403);
 			return res
-				.json(403,
-					{ 'error': 'You are blocked from logging in, please contact the admin.' });
+				.json(createResponse<string>(
+					'User has been blocked.', ResponseTypes.ACCESS_DENIED));
+
 		}
 
 		const jwtToken = await this.jwtService.generateJWTToken(user);
 
-		return res.json(201, {
-			token: jwtToken.token,
-			exp: jwtToken.expirationTimestamp
-		});
+		res.status(201);
+		return res
+			.json(createResponse<{ token: string, exp: number }> ( {
+						token: jwtToken.token,
+						exp: jwtToken.expirationTimestamp
+					}, ResponseTypes.AUTH_TOKEN));
 	}
 
 }

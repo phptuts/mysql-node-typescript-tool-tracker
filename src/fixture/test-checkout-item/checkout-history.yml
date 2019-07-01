@@ -1,0 +1,16 @@
+entity: CheckoutHistory
+items:
+    checkout_hammer1_checkout_history:
+        item: '@already_checkout_out_hammer'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@checkout_user_1'
+
+    checkout_hammer2_checkout_history:
+        item: '@damage_hammer'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@checkout_user_2'
+        returnDate: '2019-02-03'
+        userReturningItem: '@checkout_user_2'
+        damaged: true
+        notes: 'Not GOOD :('
+
