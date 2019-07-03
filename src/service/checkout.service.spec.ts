@@ -19,6 +19,10 @@ describe('Checkout Service', () => {
 	let itemStatusService: ItemStatusService|any;
 
 	let itemStatusServiceFindByID: jest.SpyInstance;
+	const user = new User();
+	user.enabled = true;
+	user.blockCheckout = false;
+	user.roles = ['ROLE_USER'];
 
 	beforeEach(async () => {
 		checkoutHistoryService = {
@@ -44,12 +48,101 @@ describe('Checkout Service', () => {
 		checkoutHistoryServiceSaveSpy.mockImplementation(checkoutHistory =>
 			Promise.resolve(checkoutHistory));
 
-		const user = new User();
 		const item = new Item();
 		const checkoutHistory = await service.checkoutItem(user, item);
 
 		expect(checkoutHistoryServiceSaveSpy).toHaveBeenCalledWith(expect.any(CheckoutHistory));
 		expect(checkoutHistory.item).toBe(item);
 		expect(checkoutHistory.userCheckoutItem).toBe(user);
+	});
+
+	it ('should return false if item is checked out', async () => {
+		const itemStatus = new ItemStatus();
+		itemStatus.isCheckedOut = true;
+
+		const item = new Item();
+
+
+		itemStatusServiceFindByID.mockImplementation(() => itemStatus);
+
+		const message = await service.canUserCheckItemOut(user, item);
+
+		expect(message.canCheckout).toBeFalsy();
+	});
+
+	it ('should return false if the item is damaged and user is not an admin', async () => {
+		const itemStatus = new ItemStatus();
+		itemStatus.isCheckedOut = false;
+		itemStatus.damaged = true;
+
+		const item = new Item();
+
+		itemStatusServiceFindByID.mockImplementation(() => itemStatus);
+
+		const message = await service.canUserCheckItemOut(user, item);
+
+		expect(message.canCheckout).toBeFalsy();
+	});
+
+	it('should return true if the item is damaged and user is admin', async () => {
+		const itemStatus = new ItemStatus();
+		itemStatus.isCheckedOut = false;
+		itemStatus.damaged = true;
+
+		user.roles = ['ROLE_ADMIN'];
+		const item = new Item();
+
+		itemStatusServiceFindByID.mockImplementation(() => itemStatus);
+
+		const message = await service.canUserCheckItemOut(user, item);
+
+		expect(message.canCheckout).toBeTruthy();
+
+	});
+
+	it('should return true if the item is not damaged and can be checkedout', async () => {
+		const itemStatus = new ItemStatus();
+		itemStatus.isCheckedOut = false;
+		itemStatus.damaged = false;
+
+		const item = new Item();
+
+		itemStatusServiceFindByID.mockImplementation(() => itemStatus);
+
+		const message = await service.canUserCheckItemOut(user, item);
+
+		expect(message.canCheckout).toBeTruthy();
+	});
+
+	it ('should not allow blocked user to checkout tool', async () => {
+		const itemStatus = new ItemStatus();
+		itemStatus.isCheckedOut = false;
+		itemStatus.damaged = false;
+		const item = new Item();
+
+		user.enabled = false;
+
+		itemStatusServiceFindByID.mockImplementation(() => itemStatus);
+
+		const message = await service.canUserCheckItemOut(user, item);
+
+		expect(message.canCheckout).toBeFalsy();
+
+	});
+
+	it ('should not allow block checkout to checkout tool', async () => {
+		const itemStatus = new ItemStatus();
+		itemStatus.isCheckedOut = false;
+		itemStatus.damaged = false;
+		const item = new Item();
+
+		user.blockCheckout = true;
+
+		itemStatusServiceFindByID.mockImplementation(() => itemStatus);
+
+		const message = await service.canUserCheckItemOut(user, item);
+
+		expect(message.canCheckout).toBeFalsy();
+
 	});
 });

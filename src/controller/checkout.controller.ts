@@ -1,12 +1,10 @@
-import { Controller, interfaces, Post } from "inversify-restify-utils";
+import { Controller, interfaces, Patch, Post } from "inversify-restify-utils";
 import { Response } from 'restify';
 import { CheckoutService } from "../service/checkout.service";
 import { inject, injectable } from "inversify";
 import { authUser } from "../middleware/authenticate.middleware";
 import { hasRole } from "../middleware/authorization.middleware";
 import { ExtendedRequest } from "../model/request/extend-request";
-import { EntityService } from "../service/entity/entity.service";
-import { Item } from "../entity/item";
 import { TYPES } from "../container/types";
 import { createResponse, ResponseTypes } from "../model/response/response.model";
 import { ItemService } from "../service/entity/item.service";
@@ -19,7 +17,7 @@ export class CheckoutController implements interfaces.Controller{
 		@inject(TYPES.ItemService) private itemService: ItemService,
 		@inject(TYPES.CheckoutService) private checkoutService: CheckoutService) {}
 
-	@Post("/checkout/:rfid")
+	@Patch("/checkout/:rfid")
 	public async checkoutItem(req: ExtendedRequest<void>, res: Response) {
 
 		const item = await this.itemService.findByRfid(req.params['rfid']);

@@ -13,6 +13,7 @@ import { Container } from "inversify";
 import { Connection } from "typeorm";
 import { User } from "../entity/user";
 import queryParser = plugins.queryParser;
+import request from 'supertest';
 
 describe('Checkout Controller', () => {
 
@@ -23,10 +24,8 @@ describe('Checkout Controller', () => {
 	let jwtService: JWTService;
 	let connection: Connection;
 
-	let disabledUser: User;
-
-	let enabledUser: User;
-
+	let user: User;
+	let jwtToken;
 
 	beforeAll( async () => {
 
@@ -48,15 +47,22 @@ describe('Checkout Controller', () => {
 			app.use( queryParser() );
 		} ).build();
 
+
 		userService = container.get( TYPES.UserService ) as UserService;
 		jwtService = container.get( TYPES.JWTService ) as JWTService;
 
 		await loadFixtures.loadFiles( [
-			path.join( __dirname, '..', 'fixture', 'test-user-login', 'user.yml' ),
+			path.join( __dirname, '..', 'fixture', 'test-checkout-item', 'user.yml' ),
+			path.join(__dirname, '..', 'fixture', 'test-checkout-item', 'catalog.yml'),
+			path.join(__dirname, '..', 'fixture', 'test-checkout-item', 'item.yml'),
+			path.join(__dirname, '..', 'fixture', 'test-checkout-item', 'checkout-history.yml')
 		], connection );
 
-		enabledUser = await userService.findByEmail( 'test-user-login_1@gmail.com' );
-		disabledUser = await userService.findByEmail( 'test-user-login_2@gmail.com' );
+		user = await userService.findByEmail(  'checkout_user_1@gmail.com' );
+
+		console.log(user, 'user logged');
+		jwtToken = (await jwtService.generateJWTToken(user)).token;
+
 		console.log( 'should run before all tests' );
 	} );
 
@@ -67,7 +73,34 @@ describe('Checkout Controller', () => {
 
 	} );
 
-	it ('test', () => expect(true).toBeTruthy());
+	it ('if an items is checked out it should block checkout', async (done) => {
+
+		const response = await request( app )
+			.patch( "/checkout/rfid_already_checkout_out_hammer" )
+			.set( "Authorization", `Bearer ${jwtToken}` );
 
 
+		expect(response.status).toBe(403);
+		expect(response.body.data).toBe('Item is already checked out.');
+		done();
+	});
+
+
+	it ('if item is not checked out it should let you check out the item', async (done) => {
+		const response = await request( app )
+			.patch( "/checkout/checkout_hammer" )
+			.set( "Authorization", `Bearer ${jwtToken}` );
+
+		expect(response.status).toBe(204);
+		done();
+	});
+
+	it ('if the user is not authenticated it should return a 401', async (done) => {
+
+		const response = await request( app )
+			.patch( "/checkout/checkout_hammer" );
+
+		expect(response.status).toBe(401);
+		done();
+	});
 });

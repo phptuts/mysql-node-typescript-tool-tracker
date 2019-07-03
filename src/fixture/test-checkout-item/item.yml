@@ -6,8 +6,8 @@ items:
         createdBy: '@checkout_user_1'
         damaged: false
 
-    damage_hammer:
+    checkout_hammer:
         catalog: '@checkout_hammer1'
-        rfid: 'rfid_damage_hammer'
+        rfid: 'checkout_hammer'
         createdBy: '@checkout_user_2'
-        damaged: true
+        damaged: false
