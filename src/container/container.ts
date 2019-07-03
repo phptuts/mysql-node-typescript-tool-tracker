@@ -14,6 +14,10 @@ import { ItemStatus } from "../entity/item-status";
 import { EntityService } from "../service/entity/entity.service";
 import { CatalogStatusService } from "../service/entity/catalog-status.service";
 import { PaginateService } from "../service/paginate.service";
+import { CheckoutController } from "../controller/checkout.controller";
+import { Item } from "../entity/item";
+import { CheckoutService } from "../service/checkout.service";
+import { ItemService } from "../service/entity/item.service";
 
 
 let container: Container;
@@ -29,12 +33,19 @@ export const createContainer = (databaseConnectionName = "default") => {
 	container.bind<PaginateService>(TYPES.PaginatedService)
 		.toService(PaginateService);
 
+	container.bind<CheckoutService>(TYPES.CheckoutService).toDynamicValue(context => {
+		return new CheckoutService(
+			context.container.get(TYPES.CheckoutHistoryService),
+			context.container.get(TYPES.ItemStatusService)
+		)
+	});
+
 	container
 		.bind<CatalogStatusService>(TYPES.CatalogStatusService)
-		.toDynamicValue( () => {
+		.toDynamicValue( context => {
 			const repository = getCustomRepository<CatalogStatusRepository>(CatalogStatusRepository, databaseConnectionName);
 
-			return new CatalogStatusService(container.get(TYPES.PaginatedService), repository);
+			return new CatalogStatusService(context.container.get(TYPES.PaginatedService), repository);
 		});
 
 	container
@@ -50,14 +61,22 @@ export const createContainer = (databaseConnectionName = "default") => {
 		});
 
 	container
+		.bind<ItemService>(TYPES.ItemService)
+		.toDynamicValue( () => {
+			return new ItemService(getRepository(Item, databaseConnectionName));
+		});
+
+	container
 		.bind<EntityService<CheckoutHistory>>(TYPES.CheckoutHistoryService)
 		.toDynamicValue(() => {
 			return new EntityService<CheckoutHistory>(getRepository(CheckoutHistory, databaseConnectionName));
 		});
 
 
-	container.bind<JWTService>( TYPES.JWTService ).toDynamicValue(() => {
-		return new JWTService(new UserService(getRepository(User, databaseConnectionName)));
+
+	container.bind<JWTService>( TYPES.JWTService ).toDynamicValue(context => {
+
+		return new JWTService(context.container.get(TYPES.UserService));
 	});
 
 	container
@@ -69,6 +88,9 @@ export const createContainer = (databaseConnectionName = "default") => {
 		.to(LoginController)
 		.whenTargetNamed('LoginController');
 
+	container.bind<restinterfaces.Controller>(TYPE.Controller)
+		.to(CheckoutController)
+		.whenTargetNamed('CheckoutController');
 
 
 	return container;

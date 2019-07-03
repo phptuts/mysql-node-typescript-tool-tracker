@@ -1,16 +1,17 @@
-import { Request, Response, Next } from 'restify';
+import {  Response, Next } from 'restify';
 import { getContainer } from "../container/container";
 import { TYPES } from "../container/types";
 import { JWTService } from "../service/jwt.service";
+import { ExtendedRequest } from "../model/request/extend-request";
 
 /**
  * Requires that a user must send a valid jwt token attached to the user
  */
-export const authUser = async (req: Request|any, res: Response, next: Next) => {
+export const authUser = async (req: ExtendedRequest<void>, res: Response, next: Next) => {
 
 	const jwtToken = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : false;
 
-	if (!jwtToken || jwtToken.length == '') {
+	if (!jwtToken) {
 		res.send(401, 'Authentication Required');
 		return;
 	}

@@ -75,8 +75,7 @@ describe( 'login controller', () => {
 		const response = await request( app )
 			.post( "/login" );
 
-		expect(response.status).toBe(401);
-		expect( response.body ).toEqual( { 'error': 'RFID number required' } );
+		expect(response.status).toBe(403);
 
 		done();
 	} );
@@ -88,7 +87,6 @@ describe( 'login controller', () => {
 			.send( { 'rfid': 'crap_rfid' } );
 
 		expect( response.status ).toBe( 403 );
-		expect( response.body ).toEqual( { 'error': 'Invalid RFID Number' } );
 
 		done();
 	} );
@@ -100,23 +98,24 @@ describe( 'login controller', () => {
 			.send( { 'rfid': disabledUser.rfid } );
 
 		expect( response.status ).toBe( 403 )
-		expect( response.body ).toEqual( { 'error': 'You are blocked from logging in, please contact the admin.' } );
 
 		done();
 	} );
 
 	it( 'should return a jwt token for enabled user', async ( done ) => {
+		console.log(enabledUser.rfid, 'rfid');
 		const response = await request( app )
 			.post( "/login" )
 			.send( { 'rfid': enabledUser.rfid } );
 
+		console.log(response.body);
 		expect(response.status).toBe(201);
 		// testing timestamp is greater than 2 hours
-		expect( response.body.exp ).toBeGreaterThan(
+		expect( response.body.data.exp ).toBeGreaterThan(
 			Math.floor( Date.now() / 1000 ) + 9 * 60
 		);
 
-		const user = await jwtService.verifyJWTToken( response.body.token ) as User;
+		const user = await jwtService.verifyJWTToken( response.body.data.token ) as User;
 		expect( user.email ).toBe( enabledUser.email );
 
 		done();

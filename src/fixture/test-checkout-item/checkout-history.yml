@@ -1,0 +1,7 @@
+entity: CheckoutHistory
+items:
+    already_checkout_out_hammer_history:
+        item: '@already_checkout_out_hammer'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@checkout_user_1'
+
