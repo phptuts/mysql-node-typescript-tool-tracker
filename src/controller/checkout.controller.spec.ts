@@ -103,4 +103,15 @@ describe('Checkout Controller', () => {
 		expect(response.status).toBe(401);
 		done();
 	});
+
+	it ('should return a 404 if not found', async (done) => {
+
+		const response = await request( app )
+			.patch( "/checkout/not_found" )
+			.set( "Authorization", `Bearer ${jwtToken}` );
+
+
+		expect(response.status).toBe(404);
+		done();
+	});
 });

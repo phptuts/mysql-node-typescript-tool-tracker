@@ -103,12 +103,10 @@ describe( 'login controller', () => {
 	} );
 
 	it( 'should return a jwt token for enabled user', async ( done ) => {
-		console.log(enabledUser.rfid, 'rfid');
 		const response = await request( app )
 			.post( "/login" )
 			.send( { 'rfid': enabledUser.rfid } );
 
-		console.log(response.body);
 		expect(response.status).toBe(201);
 		// testing timestamp is greater than 2 hours
 		expect( response.body.data.exp ).toBeGreaterThan(
@@ -121,6 +119,15 @@ describe( 'login controller', () => {
 		done();
 	} );
 
+	it ('should return a 403 if not user is found with the rfid', async (done) => {
+		const response = await request( app )
+			.post( "/login" )
+			.send( { 'rfid': 'craprfid' } );
+
+		expect(response.status).toBe(403);
+
+		done();
+	});
 
 } );
 
