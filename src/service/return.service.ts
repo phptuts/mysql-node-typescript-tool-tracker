@@ -1,17 +1,17 @@
 
-import { Repository } from "typeorm";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { User } from "../entity/user";
 import { Item } from "../entity/item";
 import { ItemStatus } from "../entity/item-status";
 import { injectable } from "inversify";
 import { EntityService } from "./entity/entity.service";
+import { ItemService } from "./entity/item.service";
 
 @injectable()
 export class ReturnService {
 
 	constructor(private checkoutHistoryService: EntityService<CheckoutHistory>,
-	            private itemService: EntityService<Item>) {}
+	            private itemService: ItemService) {}
 
 	/**
 	 * Returns an item
@@ -34,10 +34,15 @@ export class ReturnService {
 
 		item.damaged = isDamaged;
 
-		await Promise.all([
-			this.checkoutHistoryService.save( checkOutHistory ),
-			this.itemService.save(item)
-		]);
+		try {
+			await Promise.all([
+				this.checkoutHistoryService.save( checkOutHistory ),
+				this.itemService.save(item)
+			]);
+		} catch (e) {
+			console.log(e, 'error');
+		}
+
 
 		return {
 			checkOutHistory,

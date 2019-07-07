@@ -1,0 +1,13 @@
+entity: CheckoutHistory
+items:
+    hammer_checked_out_history:
+        item: '@hammer_checked_out'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@return_tool_1'
+
+    hammer_returned_checkout_history:
+        item: '@hammer_returned'
+        checkoutDate: '2019-02-01'
+        userCheckoutItem: '@return_tool_1'
+        returnDate: '2019-03-03'
+        userReturningItem: '@return_tool_1'

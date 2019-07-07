@@ -80,7 +80,7 @@ describe('Checkout Controller', () => {
 			.set( "Authorization", `Bearer ${jwtToken}` );
 
 
-		expect(response.status).toBe(403);
+		expect(response.status).toBe(400);
 		expect(response.body.data).toBe('Item is already checked out.');
 		done();
 	});

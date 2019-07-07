@@ -1,6 +1,6 @@
 import { Next, Response } from "restify";
 import { User } from "../entity/user";
-import { ExtendedRequest } from "../model/request/extend-request";
+import { ExtendedRequest } from "../model/request/extend.request";
 
 /**
  * Requires that a user has a certain role to continue

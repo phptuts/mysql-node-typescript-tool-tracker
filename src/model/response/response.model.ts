@@ -6,7 +6,8 @@ export enum ResponseTypes {
 	FORM_ERRORS = 'form_errors',
 	NOT_FOUND = 'not_found',
 	ACCESS_DENIED = 'access_denied',
-	AUTH_TOKEN = 'auth_token'
+	AUTH_TOKEN = 'auth_token',
+	BAD_REQUEST = 'bad_request'
 }
 
 export interface PaginatedMetaModel extends MetaResponseModel {

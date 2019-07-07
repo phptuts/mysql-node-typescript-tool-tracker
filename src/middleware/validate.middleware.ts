@@ -1,6 +1,6 @@
 import { Next, Response } from "restify";
 import { ValidationError } from "class-validator";
-import { ExtendedRequest } from "../model/request/extend-request";
+import { ExtendedRequest } from "../model/request/extend.request";
 import { ClassType, transformAndValidate } from "class-transformer-validator";
 import { FormError, MetaResponseModel, ResponseModel, ResponseTypes } from "../model/response/response.model";
 

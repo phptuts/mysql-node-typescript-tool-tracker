@@ -4,7 +4,7 @@ import { CheckoutService } from "../service/checkout.service";
 import { inject, injectable } from "inversify";
 import { authUser } from "../middleware/authenticate.middleware";
 import { hasRole } from "../middleware/authorization.middleware";
-import { ExtendedRequest } from "../model/request/extend-request";
+import { ExtendedRequest } from "../model/request/extend.request";
 import { TYPES } from "../container/types";
 import { createResponse, ResponseTypes } from "../model/response/response.model";
 import { ItemService } from "../service/entity/item.service";
@@ -34,9 +34,9 @@ export class CheckoutController implements interfaces.Controller{
 
 		if (!canCheckoutItem.canCheckout) {
 
-			res.status(403);
+			res.status(400);
 			return res.json(createResponse<string>(
-				canCheckoutItem.reason, ResponseTypes.ACCESS_DENIED));
+				canCheckoutItem.reason, ResponseTypes.BAD_REQUEST));
 		}
 
 		await this.checkoutService.checkoutItem(req.user, item);

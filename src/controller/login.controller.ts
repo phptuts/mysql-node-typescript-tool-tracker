@@ -6,7 +6,7 @@ import { TYPES } from "../container/types";
 import { UserService } from "../service/entity/user.service";
 import { LoginRequest } from "../model/request/login.request";
 import { validateRequest } from "../middleware/validate.middleware";
-import { ExtendedRequest } from "../model/request/extend-request";
+import { ExtendedRequest } from "../model/request/extend.request";
 import { createResponse, ResponseTypes } from "../model/response/response.model";
 
 

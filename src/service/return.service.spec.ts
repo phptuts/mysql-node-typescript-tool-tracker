@@ -6,6 +6,7 @@ import { CheckoutHistory } from "../entity/checkout-history";
 import { ItemStatus } from "../entity/item-status";
 import { User } from "../entity/user";
 import { EntityService } from "./entity/entity.service";
+import { ItemService } from "./entity/item.service";
 
 describe('Return Service', () => {
 
@@ -19,7 +20,7 @@ describe('Return Service', () => {
 
 	let itemServiceSaveSpy: jest.SpyInstance;
 
-	let itemService: EntityService<Item>|any;
+	let itemService: ItemService|any;
 
 	let checkoutHistoryService: EntityService<CheckoutHistory>|any;
 

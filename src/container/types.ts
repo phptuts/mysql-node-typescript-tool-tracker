@@ -3,6 +3,7 @@ const TYPES = {
 	CheckoutHistoryService: Symbol.for("CheckoutHistoryRepository"),
 	ItemStatusService: Symbol.for("ItemStatusService"),
 	UserService: Symbol.for("UserService"),
+	ReturnService: Symbol.for("ReturnService"),
 	ItemService: Symbol.for("ItemService"),
 	CatalogStatusService: Symbol.for("CatalogStatusService"),
 	JWTService: Symbol.for("JWTService"),

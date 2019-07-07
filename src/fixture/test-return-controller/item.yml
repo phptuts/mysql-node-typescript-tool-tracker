@@ -1,0 +1,14 @@
+entity: Item
+items:
+    hammer_checked_out:
+        catalog: '@checkout_hammer1'
+        rfid: 'hammer_checked_out'
+        createdBy: '@return_tool_1'
+        damaged: false
+
+    hammer_returned:
+        catalog: '@checkout_hammer1'
+        rfid: 'hammer_returned_rfid'
+        createdBy: '@return_tool_1'
+        damaged: false
+

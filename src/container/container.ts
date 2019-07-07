@@ -18,6 +18,8 @@ import { CheckoutController } from "../controller/checkout.controller";
 import { Item } from "../entity/item";
 import { CheckoutService } from "../service/checkout.service";
 import { ItemService } from "../service/entity/item.service";
+import { ReturnController } from "../controller/return.controller";
+import { ReturnService } from "../service/return.service";
 
 
 let container: Container;
@@ -37,6 +39,13 @@ export const createContainer = (databaseConnectionName = "default") => {
 		return new CheckoutService(
 			context.container.get(TYPES.CheckoutHistoryService),
 			context.container.get(TYPES.ItemStatusService)
+		)
+	});
+
+	container.bind<ReturnService>(TYPES.ReturnService).toDynamicValue(context => {
+		return new ReturnService(
+			context.container.get(TYPES.CheckoutHistoryService),
+			context.container.get(TYPES.ItemService)
 		)
 	});
 
@@ -91,6 +100,10 @@ export const createContainer = (databaseConnectionName = "default") => {
 	container.bind<restinterfaces.Controller>(TYPE.Controller)
 		.to(CheckoutController)
 		.whenTargetNamed('CheckoutController');
+
+	container.bind<restinterfaces.Controller>(TYPE.Controller)
+		.to(ReturnController)
+		.whenTargetNamed('ReturnController');
 
 
 	return container;

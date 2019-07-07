@@ -3,7 +3,7 @@ import { LoginRequest } from "../model/request/login.request";
 import { validateRequest } from "./validate.middleware";
 import 'reflect-metadata';
 import { Request, Response } from "restify";
-import { ExtendedRequest } from "../model/request/extend-request";
+import { ExtendedRequest } from "../model/request/extend.request";
 import { FormError, MetaResponseModel, ResponseModel } from "../model/response/response.model";
 
 describe( 'Validate MiddleWare', () => {

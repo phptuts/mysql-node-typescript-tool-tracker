@@ -1,0 +1,19 @@
+entity: User
+items:
+    return_tool_1:
+        email: 'return_tool_1@gmail.com'
+        password: 'fake'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User1'
+        enabled: true
+        blockCheckout: false
+        rfid: 'rfid_{{random.number}}'
+        roles: ['ROLE_USER', 'ROLE_ADMIN']
+    return_tool_2:
+        email: 'return_tool_2@gmail.com'
+        password: 'fake'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User2'
+        enabled: false
+        blockCheckout: true
+        rfid: 'rfid_{{random.number}}'
+        roles: ['ROLE_USER']
+

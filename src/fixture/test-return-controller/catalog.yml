@@ -3,6 +3,6 @@ items:
     checkout_hammer1:
         name: 'Hammer'
         description: 'Hammer'
-        createdBy: '@checkout_user_1'
+        createdBy: '@return_tool_1'
         imageUrl: 'https://fakeimg.pl/350x200/ff0000/000/'
 
