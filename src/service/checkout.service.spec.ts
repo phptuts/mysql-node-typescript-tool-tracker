@@ -1,7 +1,7 @@
 import 'jest';
 import { CheckoutService } from "./checkout.service";
 import { CheckoutHistory } from "../entity/checkout-history";
-import { User } from "../entity/user";
+import { ROLES, User } from "../entity/user";
 import { Item } from "../entity/item";
 import { EntityService } from "./entity/entity.service";
 import { ItemStatusService } from "./entity/item-status.service";
@@ -22,7 +22,7 @@ describe('Checkout Service', () => {
 	const user = new User();
 	user.enabled = true;
 	user.blockCheckout = false;
-	user.roles = ['ROLE_USER'];
+	user.roles = [ROLES.ROLE_USER];
 
 	beforeEach(async () => {
 		checkoutHistoryService = {
@@ -89,7 +89,7 @@ describe('Checkout Service', () => {
 		itemStatus.isCheckedOut = false;
 		itemStatus.damaged = true;
 
-		user.roles = ['ROLE_ADMIN'];
+		user.roles = [ROLES.ROLE_ADMIN];
 		const item = new Item();
 
 		itemStatusServiceFindByID.mockImplementation(() => itemStatus);

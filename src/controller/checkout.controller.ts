@@ -1,4 +1,4 @@
-import { Controller, interfaces, Patch, Post } from "inversify-restify-utils";
+import { Controller, interfaces, Patch } from "inversify-restify-utils";
 import { Response } from 'restify';
 import { CheckoutService } from "../service/checkout.service";
 import { inject, injectable } from "inversify";
@@ -8,9 +8,10 @@ import { ExtendedRequest } from "../model/request/extend.request";
 import { TYPES } from "../container/types";
 import { createResponse, ResponseTypes } from "../model/response/response.model";
 import { ItemService } from "../service/entity/item.service";
+import { ROLES } from "../entity/user";
 
 @injectable()
-@Controller("/", authUser, hasRole('ROLE_USER'))
+@Controller("/", authUser, hasRole(ROLES.ROLE_USER))
 export class CheckoutController implements interfaces.Controller{
 
 	constructor(

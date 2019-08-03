@@ -1,5 +1,5 @@
 import { CatalogStatusService } from "../service/entity/catalog-status.service";
-import { Controller, Get, interfaces,  } from 'inversify-restify-utils';
+import { Controller, Get, interfaces, } from 'inversify-restify-utils';
 import { PaginatedMetaModel, ResponseModel } from "../model/response/response.model";
 import { CatalogStatus } from "../entity/catalog-status";
 import { inject, injectable } from "inversify";
@@ -7,10 +7,11 @@ import { Request } from 'restify';
 import { authUser } from "../middleware/authenticate.middleware";
 import { hasRole } from "../middleware/authorization.middleware";
 import { TYPES } from "../container/types";
+import { ROLES } from "../entity/user";
 
 
 @injectable()
-@Controller("/", authUser, hasRole('ROLE_USER'))
+@Controller("/", authUser, hasRole(ROLES.ROLE_USER))
 export class CatalogController implements interfaces.Controller {
 
 	constructor(@inject(TYPES.CatalogStatusService) private readonly catalogStatusService: CatalogStatusService) { }

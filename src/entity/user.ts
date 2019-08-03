@@ -38,5 +38,10 @@ export class User {
 				return value.split(',');
 			}
 		} })
-	roles: string[];
+	roles: ROLES[];
+}
+
+export enum ROLES {
+	ROLE_USER = 'ROLE_USER',
+	ROLE_ADMIN = 'ROLE_ADMIN'
 }

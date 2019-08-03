@@ -9,6 +9,8 @@ const TYPES = {
 	JWTService: Symbol.for("JWTService"),
 	PaginatedService: Symbol.for("PaginatedService"),
 	CheckoutService: Symbol.for("CheckoutService"),
+
+	UniqueUserField: Symbol.for("UniqueUserField"),
 };
 
 export { TYPES };

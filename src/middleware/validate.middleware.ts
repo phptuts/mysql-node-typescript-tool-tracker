@@ -16,10 +16,12 @@ export const validateRequest = <T extends object>(
 		try {
 			req.validatedObject =
 				await transformAndValidate(classType, req.body) as T;
+			console.log(req.validatedObject, 'validated object');
 			next();
 			return;
 
 		} catch (e) {
+			console.log(e);
 			if (!Array.isArray(e)) {
 				throw e;
 			}

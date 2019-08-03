@@ -1,6 +1,6 @@
 import 'jest';
 import { JWTService } from "./jwt.service";
-import { User } from "../entity/user";
+import { ROLES, User } from "../entity/user";
 import { EntityService } from "./entity/entity.service";
 
 describe('JWT Service', () => {
@@ -39,7 +39,7 @@ describe('JWT Service', () => {
 	it ('should let an admin user login for 30 seconds', async () => {
 		const user = new User();
 		user.id = 'fake_user_id';
-		user.roles = ['ROLE_ADMIN'];
+		user.roles = [ROLES.ROLE_ADMIN];
 		const expectedDate = Math.floor(Date.now() / 1000) + 30 * 60;
 
 		userServiceFindByIdSpy.mockImplementation(() => user);

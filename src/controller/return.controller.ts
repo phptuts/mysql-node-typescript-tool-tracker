@@ -1,4 +1,4 @@
-import { Controller, interfaces, Patch, Post, } from 'inversify-restify-utils';
+import { Controller, interfaces, Patch, } from 'inversify-restify-utils';
 import { ExtendedRequest } from "../model/request/extend.request";
 import { inject, injectable } from "inversify";
 import { Response } from 'restify';
@@ -10,9 +10,10 @@ import { ReturnService } from "../service/return.service";
 import { ReturnRequest } from "../model/request/return.request";
 import { validateRequest } from "../middleware/validate.middleware";
 import { TYPES } from "../container/types";
+import { ROLES } from "../entity/user";
 
 @injectable()
-@Controller("/", authUser, hasRole('ROLE_USER'))
+@Controller("/", authUser, hasRole(ROLES.ROLE_USER))
 export class ReturnController implements interfaces.Controller {
 
 	constructor(

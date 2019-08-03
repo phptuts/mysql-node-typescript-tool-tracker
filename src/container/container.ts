@@ -20,6 +20,8 @@ import { CheckoutService } from "../service/checkout.service";
 import { ItemService } from "../service/entity/item.service";
 import { ReturnController } from "../controller/return.controller";
 import { ReturnService } from "../service/return.service";
+import { UniqueFieldValidator } from "../validator/unique-field.validator";
+import { RegisterController } from "../controller/admin/register.controller";
 
 
 let container: Container;
@@ -48,6 +50,10 @@ export const createContainer = (databaseConnectionName = "default") => {
 			context.container.get(TYPES.ItemService)
 		)
 	});
+
+	container
+		.bind<UniqueFieldValidator>(UniqueFieldValidator)
+		.toService(UniqueFieldValidator);
 
 	container
 		.bind<CatalogStatusService>(TYPES.CatalogStatusService)
@@ -104,6 +110,10 @@ export const createContainer = (databaseConnectionName = "default") => {
 	container.bind<restinterfaces.Controller>(TYPE.Controller)
 		.to(ReturnController)
 		.whenTargetNamed('ReturnController');
+
+	container.bind<restinterfaces.Controller>(TYPE.Controller)
+		.to(RegisterController)
+		.whenTargetNamed('RegisterController');
 
 
 	return container;

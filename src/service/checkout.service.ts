@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { CheckoutHistory } from "../entity/checkout-history";
-import { User } from "../entity/user";
+import { ROLES, User } from "../entity/user";
 import { Item } from "../entity/item";
 import { EntityService } from "./entity/entity.service";
 import { ItemStatusService } from "./entity/item-status.service";
@@ -39,7 +39,7 @@ export class CheckoutService {
 			return { canCheckout: false, reason: 'Item is already checked out.' };
 		}
 
-		if (itemStatus.damaged && !user.roles.includes('ROLE_ADMIN')) {
+		if (itemStatus.damaged && !user.roles.includes(ROLES.ROLE_ADMIN)) {
 			return { canCheckout: false, reason: 'Item is damaged and can only be checked out by and admin.' };
 		}
 

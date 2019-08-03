@@ -1,6 +1,6 @@
 import 'jest';
 import { Next, Request, Response } from "restify";
-import { User } from "../entity/user";
+import { ROLES, User } from "../entity/user";
 import { hasRole } from "./authorization.middleware";
 
 describe('Authorization Middleware', () => {
@@ -33,7 +33,7 @@ describe('Authorization Middleware', () => {
 	});
 
 	it('should return 403 if user is not present in request object', async () => {
-		await hasRole('ROLE_USER')(req, res, nextSpy);
+		await hasRole(ROLES.ROLE_USER)(req, res, nextSpy);
 		expect(responseSpy).toHaveBeenCalledWith(403, 'Permission Denied.');
 		expect(nextSpy).not.toHaveBeenCalled();
 	});
@@ -41,16 +41,16 @@ describe('Authorization Middleware', () => {
 	it ('should return 403 if user does not have the right role', async () => {
 		req.user = new User();
 		req.user.roles = ['ROLE_USER'];
-		await hasRole('ROLE_ADMIN')(req, res, nextSpy);
+		await hasRole(ROLES.ROLE_ADMIN)(req, res, nextSpy);
 		expect(responseSpy).toHaveBeenCalledWith(403, 'Permission Denied.');
 		expect(nextSpy).not.toHaveBeenCalled();
 	});
 
 	it ('should call next if user has right role', async () => {
 		req.user = new User();
-		req.user.roles = ['ROLE_ADMIN'];
+		req.user.roles = [ROLES.ROLE_ADMIN];
 		req.user.enabled = true;
-		await hasRole('ROLE_ADMIN')(req, res, nextSpy);
+		await hasRole(ROLES.ROLE_ADMIN)(req, res, nextSpy);
 		expect(responseSpy).not.toHaveBeenCalled();
 		expect(nextSpy).toHaveBeenCalled();
 	});

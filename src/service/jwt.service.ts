@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import path from 'path';
-import { promises as fsPromise }  from 'fs'
-import { User } from "../entity/user";
+import { promises as fsPromise } from 'fs'
+import { ROLES, User } from "../entity/user";
 import { injectable } from "inversify";
 import { UserService } from "./entity/user.service";
 import "reflect-metadata";
@@ -20,7 +20,7 @@ export class JWTService {
 
 		let addMillisecondsToTimeStamp  =  10 * 60; // 10 minutes in milliseconds
 
-		if (user.roles.includes('ROLE_ADMIN')) {
+		if (user.roles.includes(ROLES.ROLE_ADMIN)) {
 			addMillisecondsToTimeStamp =  30 * 60; // 30 minutes in milliseconds
 		}
 
