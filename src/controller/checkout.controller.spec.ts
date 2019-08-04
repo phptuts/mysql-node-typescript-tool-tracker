@@ -17,7 +17,7 @@ import request from 'supertest';
 
 describe('Checkout Controller', () => {
 
-	const databaseName = 'CheckoutController';
+	process.env.DB_CONNECTION_NAME = 'CheckoutController';
 	let app: Server | any;
 	let container: Container;
 	let userService: UserService;
@@ -32,11 +32,11 @@ describe('Checkout Controller', () => {
 		const testConfigPath = path.join( __dirname, '..', '..', '.env-test' );
 		dotenv.config( { path: testConfigPath } );
 
-		connection = await createConnectionTest( databaseName );
+		connection = await createConnectionTest(  );
 
 		const loadFixtures = new LoadTestFixtures();
 
-		container = createContainer( databaseName );
+		container = createContainer(  );
 
 		const server = new InversifyRestifyServer( container );
 		app = server.setConfig( app => {
@@ -68,7 +68,7 @@ describe('Checkout Controller', () => {
 
 	afterAll( async () => {
 		await connection.close();
-		await dropDatabase( databaseName );
+		await dropDatabase(  );
 		console.log( 'should run after all tests' );
 
 	} );

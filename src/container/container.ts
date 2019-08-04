@@ -26,7 +26,7 @@ import { RegisterController } from "../controller/admin/register.controller";
 
 let container: Container;
 
-export const createContainer = (databaseConnectionName = "default") => {
+export const createContainer = () => {
 
 	container = new Container({
 		autoBindInjectable: true,
@@ -58,7 +58,7 @@ export const createContainer = (databaseConnectionName = "default") => {
 	container
 		.bind<CatalogStatusService>(TYPES.CatalogStatusService)
 		.toDynamicValue( context => {
-			const repository = getCustomRepository<CatalogStatusRepository>(CatalogStatusRepository, databaseConnectionName);
+			const repository = getCustomRepository<CatalogStatusRepository>(CatalogStatusRepository, process.env.DB_CONNECTION_NAME);
 
 			return new CatalogStatusService(context.container.get(TYPES.PaginatedService), repository);
 		});
@@ -66,25 +66,25 @@ export const createContainer = (databaseConnectionName = "default") => {
 	container
 		.bind<ItemStatusService>(TYPES.ItemStatusService)
 		.toDynamicValue( () => {
-			return new ItemStatusService(getRepository(ItemStatus, databaseConnectionName));
+			return new ItemStatusService(getRepository(ItemStatus, process.env.DB_CONNECTION_NAME));
 		});
 
 	container
 		.bind<EntityService<User>>(TYPES.UserService)
 		.toDynamicValue( () => {
-			return new UserService(getRepository(User, databaseConnectionName));
+			return new UserService(getRepository(User, process.env.DB_CONNECTION_NAME));
 		});
 
 	container
 		.bind<ItemService>(TYPES.ItemService)
 		.toDynamicValue( () => {
-			return new ItemService(getRepository(Item, databaseConnectionName));
+			return new ItemService(getRepository(Item, process.env.DB_CONNECTION_NAME));
 		});
 
 	container
 		.bind<EntityService<CheckoutHistory>>(TYPES.CheckoutHistoryService)
 		.toDynamicValue(() => {
-			return new EntityService<CheckoutHistory>(getRepository(CheckoutHistory, databaseConnectionName));
+			return new EntityService<CheckoutHistory>(getRepository(CheckoutHistory, process.env.DB_CONNECTION_NAME));
 		});
 
 

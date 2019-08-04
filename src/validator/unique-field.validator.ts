@@ -1,17 +1,19 @@
 import {ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface} from "class-validator";
 import { getRepository } from "typeorm";
-import { injectable } from "inversify";
 
 @ValidatorConstraint()
 export class UniqueFieldValidator implements ValidatorConstraintInterface {
 
 
-
+	/**
+	 * Return true if the value does not exist in the database
+	 *
+	 * @param value
+	 * @param validationArguments
+	 */
 	async validate( value: string, validationArguments?: ValidationArguments ): Promise<boolean>  {
 		const [uniqueField, tableClass] = validationArguments.constraints;
 
-		console.log(uniqueField, tableClass, value);
-		console.log(value);
 		if (!value) {
 			return false;
 		}
@@ -19,9 +21,7 @@ export class UniqueFieldValidator implements ValidatorConstraintInterface {
 		const findOneSearch = {};
 		findOneSearch[uniqueField] = value;
 
-		const objectExists = await getRepository(tableClass).findOne(findOneSearch);
-
-		console.log(objectExists, 'does object exist');
+		const objectExists = await getRepository(tableClass, process.env.DB_CONNECTION_NAME).findOne(findOneSearch);
 
 		return objectExists === undefined;
 	}

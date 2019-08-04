@@ -7,7 +7,8 @@ export enum ResponseTypes {
 	NOT_FOUND = 'not_found',
 	ACCESS_DENIED = 'access_denied',
 	AUTH_TOKEN = 'auth_token',
-	BAD_REQUEST = 'bad_request'
+	BAD_REQUEST = 'bad_request',
+	REGISTER_USER = 'register_user'
 }
 
 export interface PaginatedMetaModel extends MetaResponseModel {

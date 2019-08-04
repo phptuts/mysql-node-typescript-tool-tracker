@@ -19,7 +19,7 @@ import { User } from "../entity/user";
 
 describe( 'login controller', () => {
 
-	const databaseName = 'LoginController';
+	process.env.DB_CONNECTION_NAME = 'LoginController';
 	let app: Server | any;
 	let container: Container;
 	let userService: UserService;
@@ -35,11 +35,11 @@ describe( 'login controller', () => {
 		const testConfigPath = path.join( __dirname, '..', '..', '.env-test' );
 		dotenv.config( { path: testConfigPath } );
 
-		connection = await createConnectionTest( databaseName );
+		connection = await createConnectionTest(  );
 
 		const loadFixtures = new LoadTestFixtures();
 
-		container = createContainer( databaseName );
+		container = createContainer(  );
 
 		const server = new InversifyRestifyServer( container );
 		app = server.setConfig( app => {
@@ -64,7 +64,7 @@ describe( 'login controller', () => {
 
 	afterAll( async () => {
 		await connection.close();
-		await dropDatabase( databaseName );
+		await dropDatabase( );
 		console.log( 'should run after all tests' );
 
 	} );

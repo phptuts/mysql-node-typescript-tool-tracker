@@ -9,7 +9,7 @@ import { ItemStatusService } from "./item-status.service";
 
 describe('ItemStatusRepository', () => {
 
-	const databaseName = 'ItemStatusRepository';
+	process.env.DB_CONNECTION_NAME = 'ItemStatusRepository';
 
 
 	let service: ItemStatusService;
@@ -25,10 +25,10 @@ describe('ItemStatusRepository', () => {
 	beforeAll(async () => {
 
 		console.log('ItemStatusService');
-		connection = await createConnectionTest(databaseName);
-		const userRepository =  getRepository(User, databaseName);
+		connection = await createConnectionTest();
+		const userRepository =  getRepository(User, process.env.DB_CONNECTION_NAME);
 
-		service = new ItemStatusService(getRepository(ItemStatus, databaseName));
+		service = new ItemStatusService(getRepository(ItemStatus, process.env.DB_CONNECTION_NAME));
 		const loadFixtures = new LoadTestFixtures();
 
 		await loadFixtures.loadFiles([
@@ -53,7 +53,7 @@ describe('ItemStatusRepository', () => {
 
 	afterAll(async () => {
 		await connection.close();
-		await dropDatabase( databaseName );
+		await dropDatabase(  );
 	});
 
 	it ('should return the items the user has checked out', async () => {

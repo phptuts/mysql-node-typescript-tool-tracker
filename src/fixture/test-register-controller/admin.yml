@@ -1,0 +1,17 @@
+entity: User
+items:
+    register_user_1:
+        email: 'register_user_1@gmail.com'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User1'
+        enabled: true
+        blockCheckout: false
+        rfid: 'rfid_admin'
+        roles: ['ROLE_USER', 'ROLE_ADMIN']
+
+    register_user_2:
+        email: 'register_user_2@gmail.com'
+        imageUrl: 'https://fakeimg.pl/350x200/?text=User1'
+        enabled: true
+        blockCheckout: false
+        rfid: 'rfid_admin_2'
+        roles: ['ROLE_USER']

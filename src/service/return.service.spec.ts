@@ -1,6 +1,5 @@
 import 'jest';
 import { ReturnService } from "./return.service";
-import { Repository } from "typeorm";
 import { Item } from "../entity/item";
 import { CheckoutHistory } from "../entity/checkout-history";
 import { ItemStatus } from "../entity/item-status";

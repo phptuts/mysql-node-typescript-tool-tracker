@@ -18,7 +18,7 @@ import { UserService } from "../service/entity/user.service";
 
 describe( 'catalog controller', () => {
 
-	const databaseName = 'CatalogController';
+	process.env.DB_CONNECTION_NAME = 'CatalogController';
 	let app: Server | any;
 	let container: Container;
 	let userService: UserService;
@@ -31,11 +31,11 @@ describe( 'catalog controller', () => {
 		const testConfigPath = path.join( __dirname, '..', '..', '.env-test' );
 		dotenv.config( { path: testConfigPath } );
 
-		connection = await createConnectionTest( databaseName );
+		connection = await createConnectionTest();
 
 		const loadFixtures = new LoadTestFixtures();
 
-		container = createContainer( databaseName );
+		container = createContainer(  );
 
 		const server = new InversifyRestifyServer( container );
 		app = server.setConfig( app => {
@@ -62,7 +62,7 @@ describe( 'catalog controller', () => {
 
 	afterAll( async () => {
 		await connection.close();
-		await dropDatabase( databaseName );
+		await dropDatabase( );
 	} );
 
 	describe('basic pagination', () => {

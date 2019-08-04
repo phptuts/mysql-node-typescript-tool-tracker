@@ -8,11 +8,11 @@ import { CatalogStatus } from "../entity/catalog-status";
 import mysql from 'mysql';
 
 
-export const createConnectionTest = async ( dbName: string ) => {
+export const createConnectionTest = async (  ) => {
 
 	try {
-		await dropDatabase(dbName);
-		await createDatabase(dbName);
+		await dropDatabase();
+		await createDatabase(process.env.DB_CONNECTION_NAME);
 	} catch (e) {
 		console.log( e, 'error' );
 	}
@@ -20,13 +20,13 @@ export const createConnectionTest = async ( dbName: string ) => {
 	try {
 
 		const connection = await createConnection( {
-			name: dbName,
+			name: process.env.DB_CONNECTION_NAME,
 			type: "mysql",
 			host: process.env['DB_HOST'],
 			port: 3306,
 			username: process.env['DB_USER'],
 			password: process.env['DB_PASSWORD'],
-			database: dbName,
+			database: process.env.DB_CONNECTION_NAME,
 			bigNumberStrings: false, // Prevent orm from serializing number to string
 			entities: [
 
@@ -53,8 +53,8 @@ export const createConnectionTest = async ( dbName: string ) => {
 
 };
 
-export const dropDatabase = async ( dbName: string ) => {
-	await runNativeQuery(`DROP DATABASE IF EXISTS \`${dbName}\`;`);
+export const dropDatabase = async (  ) => {
+	await runNativeQuery(`DROP DATABASE IF EXISTS \`${process.env.DB_CONNECTION_NAME}\`;`);
 };
 
 

@@ -21,7 +21,6 @@ export const validateRequest = <T extends object>(
 			return;
 
 		} catch (e) {
-			console.log(e);
 			if (!Array.isArray(e)) {
 				throw e;
 			}

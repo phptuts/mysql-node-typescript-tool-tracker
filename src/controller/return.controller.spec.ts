@@ -18,7 +18,7 @@ import { ItemStatusService } from "../service/entity/item-status.service";
 
 describe('return controller', () => {
 
-	const databaseName = 'ReturnController';
+	process.env.DB_CONNECTION_NAME = 'ReturnController';
 	let app: Server | any;
 	let container: Container;
 	let userService: UserService;
@@ -34,11 +34,11 @@ describe('return controller', () => {
 		const testConfigPath = path.join( __dirname, '..', '..', '.env-test' );
 		dotenv.config( { path: testConfigPath } );
 
-		connection = await createConnectionTest( databaseName );
+		connection = await createConnectionTest(  );
 
 		const loadFixtures = new LoadTestFixtures();
 
-		container = createContainer( databaseName );
+		container = createContainer(  );
 
 		const server = new InversifyRestifyServer( container );
 		app = server.setConfig( app => {
@@ -71,7 +71,7 @@ describe('return controller', () => {
 
 	afterAll( async () => {
 		await connection.close();
-		await dropDatabase( databaseName );
+		await dropDatabase( );
 		console.log( 'should run after all tests' );
 
 	} );
