@@ -10,17 +10,17 @@ import { UserService } from "../service/entity/user.service";
 import { EntityService } from "../service/entity/entity.service";
 
 describe('container', () => {
-	const databaseName = 'default';
+	process.env.DB_CONNECTION_NAME = 'default';
 	let connection;
 
 
 	beforeAll(async () => {
-		connection = await createConnectionTest( databaseName );
+		connection = await createConnectionTest( );
 	});
 
 	afterAll(async () => {
 		await connection.close();
-		await dropDatabase(databaseName);
+		await dropDatabase();
 	});
 
 	it ('should be able to use the getContainer function without creating a starting container and fetch all dependencies', () => {

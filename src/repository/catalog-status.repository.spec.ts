@@ -8,14 +8,14 @@ import { createConnectionTest, dropDatabase } from "../test/test-database-utils"
 
 describe('catalog status repository', () => {
 
-	const databaseName = 'CatalogStatusRepository';
+	process.env.DB_CONNECTION_NAME = 'CatalogStatusRepository';
 
 	let repository: CatalogStatusRepository;
 	let connection: Connection;
 
 	beforeAll(async () => {
 
-		connection = await createConnectionTest(databaseName);
+		connection = await createConnectionTest();
 
 		const loadFixtures = new LoadTestFixtures();
 
@@ -26,13 +26,13 @@ describe('catalog status repository', () => {
 			path.join(__dirname,'..','fixture', 'test-item-status-service', 'checkout-history.yml')
 		], connection);
 
-		repository = getCustomRepository(CatalogStatusRepository, databaseName);
+		repository = getCustomRepository(CatalogStatusRepository, process.env.DB_CONNECTION_NAME);
 
 	});
 
 	afterAll( async () => {
 		await connection.close();
-		await dropDatabase( databaseName );
+		await dropDatabase( );
 	} );
 
 	it ('should be able to search with pagination', async () => {
