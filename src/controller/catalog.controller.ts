@@ -17,12 +17,25 @@ export class CatalogController implements interfaces.Controller {
 	constructor(@inject(TYPES.CatalogStatusService) private readonly catalogStatusService: CatalogStatusService) { }
 
 	@Get("/catalog-search")
-	async search(req: Request): Promise<ResponseModel<CatalogStatus, PaginatedMetaModel>> {
+	public async search(req: Request): Promise<ResponseModel<CatalogStatus, PaginatedMetaModel>> {
 
 		const term = req.query.term || '';
 		const page = parseInt(req.query.page) || 1;
 		const availableOnly = req.query.availableOnly === '1';
 
 		return await this.catalogStatusService.search(page, availableOnly, term);
+	}
+
+	// Get's an catalog item
+	public async get() {
+
+	}
+
+	public async add() {
+
+	}
+
+	public async edit() {
+
 	}
 }

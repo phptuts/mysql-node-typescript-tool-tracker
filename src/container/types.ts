@@ -9,7 +9,7 @@ const TYPES = {
 	JWTService: Symbol.for("JWTService"),
 	PaginatedService: Symbol.for("PaginatedService"),
 	CheckoutService: Symbol.for("CheckoutService"),
-
+	FileService: Symbol.for("FileService"),
 	UniqueUserField: Symbol.for("UniqueUserField"),
 };
 

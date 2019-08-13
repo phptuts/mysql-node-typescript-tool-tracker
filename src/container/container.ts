@@ -20,8 +20,8 @@ import { CheckoutService } from "../service/checkout.service";
 import { ItemService } from "../service/entity/item.service";
 import { ReturnController } from "../controller/return.controller";
 import { ReturnService } from "../service/return.service";
-import { UniqueFieldValidator } from "../validator/unique-field.validator";
-import { RegisterController } from "../controller/admin/register.controller";
+import { UserController } from "../controller/user.controller";
+import { FileService } from "../service/file.service";
 
 
 let container: Container;
@@ -37,6 +37,9 @@ export const createContainer = () => {
 	container.bind<PaginateService>(TYPES.PaginatedService)
 		.toService(PaginateService);
 
+	container.bind<FileService>(TYPES.FileService)
+		.toService(FileService);
+
 	container.bind<CheckoutService>(TYPES.CheckoutService).toDynamicValue(context => {
 		return new CheckoutService(
 			context.container.get(TYPES.CheckoutHistoryService),
@@ -50,10 +53,6 @@ export const createContainer = () => {
 			context.container.get(TYPES.ItemService)
 		)
 	});
-
-	container
-		.bind<UniqueFieldValidator>(UniqueFieldValidator)
-		.toService(UniqueFieldValidator);
 
 	container
 		.bind<CatalogStatusService>(TYPES.CatalogStatusService)
@@ -88,7 +87,6 @@ export const createContainer = () => {
 		});
 
 
-
 	container.bind<JWTService>( TYPES.JWTService ).toDynamicValue(context => {
 
 		return new JWTService(context.container.get(TYPES.UserService));
@@ -112,8 +110,8 @@ export const createContainer = () => {
 		.whenTargetNamed('ReturnController');
 
 	container.bind<restinterfaces.Controller>(TYPE.Controller)
-		.to(RegisterController)
-		.whenTargetNamed('RegisterController');
+		.to(UserController)
+		.whenTargetNamed('UserController');
 
 
 	return container;

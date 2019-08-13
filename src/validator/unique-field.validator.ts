@@ -27,7 +27,9 @@ export class UniqueFieldValidator implements ValidatorConstraintInterface {
 	}
 
 	defaultMessage( validationArguments?: ValidationArguments ): string {
-		return "";
+		const [uniqueField, tableClass] = validationArguments.constraints;
+
+		return `Please tell developer to enter a valid error message for UniqueFieldValidator [uniqueField] => '${uniqueField}' and [tableClass] => '${tableClass}'`;
 	}
 
 

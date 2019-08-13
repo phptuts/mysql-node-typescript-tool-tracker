@@ -1,18 +1,18 @@
 import { plugins, Server } from "restify";
 import { Container } from "inversify";
-import { UserService } from "../../service/entity/user.service";
-import { JWTService } from "../../service/jwt.service";
+import { UserService } from "../service/entity/user.service";
+import { JWTService } from "../service/jwt.service";
 import { Connection } from "typeorm";
 import path from "path";
 import dotenv from "dotenv";
-import { createConnectionTest, dropDatabase } from "../../test/test-database-utils";
-import { LoadTestFixtures } from "../../test/load-test-fixtures";
-import { createContainer } from "../../container/container";
+import { createConnectionTest, dropDatabase } from "../test/test-database-utils";
+import { LoadTestFixtures } from "../test/load-test-fixtures";
+import { createContainer } from "../container/container";
 import { InversifyRestifyServer } from "inversify-restify-utils";
 import * as bodyParser from 'body-parser';
-import { TYPES } from "../../container/types";
-import { RegisterRequest } from "../../model/request/register.request";
-import { ROLES } from "../../entity/user";
+import { TYPES } from "../container/types";
+import { RegisterRequest } from "../model/request/register.request";
+import { ROLES } from "../entity/user";
 import queryParser = plugins.queryParser;
 import request from 'supertest';
 
@@ -47,7 +47,7 @@ describe('register controller', () => {
 		} ).build();
 
 		await loadFixtures.loadFiles([
-			path.join( __dirname, '..', '..', 'fixture', 'test-register-controller', 'admin.yml' )
+			path.join( __dirname, '..', 'fixture', 'test-register-controller', 'admin.yml' )
 		], connection);
 
 		userService = container.get( TYPES.UserService ) as UserService;
@@ -72,7 +72,7 @@ describe('register controller', () => {
 		};
 
 		const response = await request( app )
-			.post( "/admin/user" )
+			.post( "/user" )
 			.set( "Authorization", `Bearer ${jwtToken}` )
 			.send(registerRequest);
 
@@ -102,7 +102,7 @@ describe('register controller', () => {
 		};
 
 		const response = await request( app )
-			.post( "/admin/user" )
+			.post( "/user" )
 			.set( "Authorization", `Bearer ${jwtToken}` )
 			.send(registerRequest);
 
@@ -120,7 +120,7 @@ describe('register controller', () => {
 		};
 
 		const response = await request( app )
-			.post( "/admin/user" )
+			.post( "/user" )
 			.set( "Authorization", `Bearer ${jwtToken}` )
 			.send(registerRequest);
 
@@ -142,7 +142,7 @@ describe('register controller', () => {
 		};
 
 		const response = await request( app )
-			.post( "/admin/user" )
+			.post( "/user" )
 			.set( "Authorization", `Bearer ${jwtToken}` )
 			.send(registerRequest);
 
@@ -163,7 +163,7 @@ describe('register controller', () => {
 		};
 
 		const response = await request( app )
-			.post( "/admin/user" )
+			.post( "/user" )
 			.set( "Authorization", `Bearer ${jwtToken}` )
 			.send(registerRequest);
 
@@ -184,7 +184,7 @@ describe('register controller', () => {
 		};
 
 		const response = await request( app )
-			.post( "/admin/user" )
+			.post( "/user" )
 			.set( "Authorization", `Bearer ${jwtToken}` )
 			.send(registerRequest);
 
